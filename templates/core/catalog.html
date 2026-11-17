@@ -61,25 +61,33 @@
                 <span class="text-wrapper-2" style="cursor: pointer;">По популярности ↓</span>
             </div>
 
-            <!-- Сетка товаров (3 колонки) -->
+                        <!-- Сетка товаров (3 колонки) -->
             <div class="product-grid">
                 {% for product in products %}
                     <article class="view-3 product-card">
-                        <div class="element-wrapper">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
-                            {% else %}
-                                <span class="text-wrapper">ФОТО / 01&nbsp;&nbsp; КОФЕ</span>
-                            {% endif %}
-                        </div>
-                        <h3 class="text-wrapper-9">{{ product.name }}</h3>
-                        <p class="text-wrapper-5">{{ product.description|default:"Эспрессо · молоко · карамель" }}</p>
-                        <p class="text-wrapper-2" style="font-weight: 500;">{{ product.price }} ₽</p>
                         
-                        <!-- Кнопка добавления в корзину -->
-                        <a href="{% url 'cart_add' product.id %}" class="div-wrapper" style="width: 100%; text-decoration: none; margin-top: 10px; height: 40px;">
-                            <span class="text-wrapper-4">В корзину</span>
+                        <!-- Ссылка на товар -->
+                        <a href="{% url 'product_detail' product.id %}" class="product-link">
+                            
+                            <!-- Блок с картинкой -->
+                            <div class="element-wrapper">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                                {% else %}
+                                    <span class="text-wrapper">ФОТО / 01&nbsp;&nbsp; КОФЕ</span>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Название -->
+                            <h3 class="text-wrapper-9">{{ product.name }}</h3>
+                            
+                            <!-- Цена -->
+                            <p class="text-wrapper-2 product-price">
+                                {{ product.price }} ₽
+                            </p>
+                            
                         </a>
+
                     </article>
                 {% empty %}
                     <p class="text-wrapper-2">Товаров пока нет. Добавьте их через админку.</p>

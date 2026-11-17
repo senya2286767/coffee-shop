@@ -582,29 +582,69 @@ body {
     margin-bottom: 24px;
 }
 
-/* Сетка товаров в 3 колонки */
 .product-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
     gap: 24px;
     width: 100%;
+    align-items: stretch;
 }
 
 .product-card {
-    display: flex;
+    display: flex !important;
     flex-direction: column;
-    gap: 12px;
+    width: 100% !important; /* Убираем жесткие 300px из Figma */
     padding: 16px;
     background-color: var(--tokens-color-white);
     border-radius: var(--tokens-space-radius);
     box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+    height: 100%;
 }
 
-.product-image {
-    width: 100%;
+/* Ссылка внутри карточки */
+.product-link {
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    object-fit: cover;
+    text-decoration: none;
+    color: inherit;
+    gap: 12px;
 }
+
+/* Контейнер для картинки */
+/* Контейнер для картинки (жестко перебиваем Figma) */
+.product-card .element-wrapper {
+    width: 100%;
+    height: 220px;
+    background-color: transparent !important; /* Убираем бежевый фон полностью */
+    border-radius: var(--tokens-space-controlradius);
+    overflow: hidden;
+    
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important; /* Убиваем все отступы */
+    margin-bottom: 16px;
+}
+
+/* Сама картинка */
+.product-card .product-image {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important; /* Вписывается целиком, не обрезается */
+    display: block;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+
+/* Цена */
+.product-price {
+    font-weight: 500;
+    margin-top: auto; /* Прижимает цену к низу */
+    padding-top: 12px;
+}
+
 
 /* Пагинация */
 .pagination {
@@ -657,5 +697,168 @@ body {
     }
     .product-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* --- СТИЛИ ДЛЯ КАРТОЧКИ ТОВАРА --- */
+.product-detail-layout {
+    display: flex;
+    gap: 48px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.product-detail-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.product-detail-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Блок с фото (Коричневый) */
+.product-hero-img {
+    width: 100%;
+    height: 400px;
+    background-color: var(--tokens-color-coffee);
+    border-radius: var(--tokens-space-radius);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Табы */
+.product-tabs {
+    display: flex;
+    gap: 8px;
+    background-color: var(--tokens-color-white);
+    padding: 8px;
+    border-radius: 40px;
+    width: fit-content;
+}
+
+.tab-btn {
+    padding: 10px 24px;
+    background: transparent;
+    border: none;
+    border-radius: 40px;
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    background-color: var(--tokens-color-cream);
+    color: var(--tokens-color-ink);
+}
+
+/* Селекторы объема */
+.volume-selector {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.volume-btn {
+    flex: 1;
+    padding: 12px;
+    background-color: var(--tokens-color-white);
+    border: 1px solid var(--tokens-color-cream);
+    border-radius: var(--tokens-space-controlradius);
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.volume-btn.active {
+    border-color: var(--tokens-color-coffee);
+    font-weight: 500;
+}
+
+/* Выбор молока */
+.milk-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.milk-dropdown {
+    width: 100%;
+    padding: 16px;
+    background-color: var(--tokens-color-white);
+    border: 1px solid var(--tokens-color-cream);
+    border-radius: var(--tokens-space-controlradius);
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-ink);
+    appearance: none; /* Убирает стандартную стрелку браузера */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236F4E37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    cursor: pointer;
+}
+
+/* Кнопки покупки */
+.btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 16px;
+    background-color: var(--tokens-color-coffee);
+    color: var(--tokens-color-white);
+    border: none;
+    border-radius: var(--tokens-space-controlradius);
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-bottom: 12px;
+}
+
+.btn-primary:hover {
+    background-color: var(--tokens-color-ink);
+}
+
+.btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 16px;
+    background-color: var(--tokens-color-white);
+    color: var(--tokens-color-coffee);
+    border: 1px solid var(--tokens-color-cream);
+    border-radius: var(--tokens-space-controlradius);
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--tokens-color-cream);
+}
+
+/* Адаптив для карточки товара */
+@media (max-width: 900px) {
+    .product-detail-layout {
+        flex-direction: column;
+    }
+    .product-hero-img {
+        height: 300px;
     }
 }

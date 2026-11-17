@@ -66,3 +66,8 @@ def cart_remove(request, product_id):
         messages.info(request, 'Товар удален из корзины.')
     
     return redirect('cart_detail')
+
+def product_detail(request, product_id):
+    """Страница конкретного товара"""
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, 'core/product_detail.html', {'product': product})

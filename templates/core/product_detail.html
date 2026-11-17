@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="catalog-page">
+    <!-- Хлебные крошки -->
+    <p class="text-wrapper" style="margin-bottom: 24px;">
+        Главная / <a href="{% url 'catalog' %}" style="color: inherit; text-decoration: none;">Каталог</a> / {{ product.name }}
+    </p>
+    
+    <!-- Заголовок -->
+    <h1 class="div" style="margin-bottom: 40px;">{{ product.name }}</h1>
+
+    <div class="product-detail-layout">
+        
+        <!-- ЛЕВАЯ ЧАСТЬ (Фото и Табы) -->
+        <div class="product-detail-left">
+            <!-- Блок с фото -->
+            <div class="product-hero-img">
+                <p class="text-wrapper" style="color: var(--tokens-color-cream);">ТЁПЛОЕ МЕСТО / ФОТО</p>
+                <h2 class="text-wrapper-7" style="margin: auto 0;">{{ product.name }}</h2>
+                <p class="text-wrapper" style="color: var(--tokens-color-cream); margin-top: auto;">Место для вашей фотографии ↗</p>
+            </div>
+
+            <!-- Табы -->
+            <div class="product-tabs">
+                <button class="tab-btn">Описание</button>
+                <button class="tab-btn active">Состав</button>
+                <button class="tab-btn">Отзывы</button>
+            </div>
+
+            <!-- Контент состава (пока статичный) -->
+            <div class="product-tab-content">
+                <h3 class="text-wrapper-12" style="margin-bottom: 16px;">Состав и пищевая ценность</h3>
+                <p class="text-wrapper-2" style="margin-bottom: 8px;">
+                    Эспрессо, молоко, карамельный соус. Содержит молоко.
+                </p>
+                <p class="text-wrapper-2">
+                    На 100 мл: 64 ккал · белки 2,1 г · жиры 3,2 г · углеводы 6,8 г.
+                </p>
+            </div>
+        </div>
+
+        <!-- ПРАВАЯ ЧАСТЬ (Опции и Покупка) -->
+        <div class="product-detail-right">
+            <p class="text-wrapper">КОФЕ / БЕСТСЕЛЛЕР</p>
+            <h2 class="text-wrapper-3" style="font-size: 32px;">Нежный, как ваше утро</h2>
+            <p class="text-wrapper-2" style="margin-bottom: 24px;">
+                {{ product.description|default:"Двойной эспрессо, молочная текстура и карамель собственного приготовления." }}
+            </p>
+
+            <!-- Выбор объема -->
+            <p class="text-wrapper" style="margin-bottom: 8px;">Объем</p>
+            <div class="volume-selector">
+                <button class="volume-btn">250 мл</button>
+                <button class="volume-btn active">300 мл ⌄</button>
+                <button class="volume-btn">400 мл</button>
+            </div>
+
+            <!-- Выбор молока -->
+            <div class="milk-selector">
+                <p class="text-wrapper" style="margin: 0;">Молоко</p>
+                <select class="milk-dropdown">
+                    <option>Классическое 3,2%</option>
+                    <option>Миндальное</option>
+                    <option>Овсяное</option>
+                    <option>Безлактозное</option>
+                </select>
+            </div>
+
+            <!-- Цена -->
+            <h2 class="div" style="font-size: 48px; margin: 24px 0;">{{ product.price }} ₽</h2>
+
+            <!-- Кнопки -->
+            <a href="{% url 'cart_add' product.id %}" class="btn-primary">
+                Добавить в корзину
+            </a>
+            
+            <button class="btn-secondary" type="button">
+                Добавить стикеры
+            </button>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
