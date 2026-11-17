@@ -1,38 +1,43 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Кофейня</title>
-</head>
-<body>
-    <h1>Наш кофе</h1>
-    
-    <div>
-        <b>Категории:</b>
-        <a href="/">Все</a>
-        {% for cat in categories %}
-            | <a href="/?category={{ cat.slug }}">{{ cat.name }}</a>
-        {% endfor %}
-    </div>
+{% extends 'core/base.html' %}
+{% load static %}
 
-    <hr>
+{% block content %}
+<header>
+    <h1 class="div" style="margin-bottom: 20px;">Наш кофе</h1>
+</header>
 
-    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-        {% for product in products %}
-            <div style="border: 1px solid #ccc; padding: 10px; width: 200px;">
+<!-- Фильтры категорий -->
+<div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
+    <a href="/" class="view-5" style="width: auto; padding: 10px 20px; text-decoration: none; height: auto;">
+        <span class="text-wrapper-11">Все</span>
+    </a>
+    {% for cat in categories %}
+        <a href="/?category={{ cat.slug }}" class="view-5" style="width: auto; padding: 10px 20px; text-decoration: none; height: auto; background-color: var(--tokens-color-white);">
+            <span class="text-wrapper-11">{{ cat.name }}</span>
+        </a>
+    {% endfor %}
+</div>
+
+<div class="view">
+    {% for product in products %}
+        <article class="view-3">
+            <div class="element-wrapper">
                 {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%;">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <span class="text-wrapper">ФОТО / 01&nbsp;&nbsp; КОФЕ</span>
                 {% endif %}
-                <h3>{{ product.name }}</h3>
-                <p>Цена: {{ product.price }} руб.</p>
-                
-                <a href="{% url 'cart_add' product.id %}">
-                    <button style="cursor: pointer; padding: 5px 10px;">Добавить в корзину</button>
-                </a>
             </div>
-        {% empty %}
-            <p>Товаров пока нет. Добавьте их через админку.</p>
-        {% endfor %}
-    </div>
-</body>
-</html>
+            <h3 class="text-wrapper-9">{{ product.name }}</h3>
+            <p class="text-wrapper-5">{{ product.description|default:"Эспрессо · молоко · карамель" }}</p>
+            <p class="text-wrapper-2">{{ product.price }} ₽</p>
+            
+            <a href="{% url 'cart_add' product.id %}" class="div-wrapper" style="width: 100%; text-decoration: none; margin-top: 10px;">
+                <span class="text-wrapper-4">В корзину</span>
+            </a>
+        </article>
+    {% empty %}
+        <p class="text-wrapper-2">Товаров пока нет. Добавьте их через админку.</p>
+    {% endfor %}
+</div>
+{% endblock %}

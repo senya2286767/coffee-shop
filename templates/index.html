@@ -1,0 +1,117 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<header>
+    <p class="text-wrapper">Главная&nbsp;&nbsp;/&nbsp;&nbsp;Ваш маленький<br>ежедневный ритуал</p>
+    <h1 class="div">Ваш маленький<br>ежедневный ритуал</h1>
+    <p class="text-wrapper-2">Свежеобжаренный кофе, любимые десерты и немного времени для себя.</p>
+</header>
+
+<section class="view" aria-labelledby="hero-title">
+    <div class="view-2">
+        <p class="text-wrapper">НЕ СПЕШИТЕ. ВЫ УЖЕ НА МЕСТЕ.</p>
+        <h2 id="hero-title" class="text-wrapper-3">Хороший день<br>начинается здесь.</h2>
+        <p class="p">Мы готовим кофе из зёрен спешелти и печём каждое утро. Закажите заранее — и заберите по пути.</p>
+        <a href="{% url 'catalog' %}" class="div-wrapper" style="text-decoration: none;">
+            <span class="text-wrapper-4">Выбрать кофе →</span>
+        </a>
+        <p class="text-wrapper-5">Самовывоз через 15 минут · от 190 ₽</p>
+    </div>
+    <div class="div-2" aria-label="Тёплое место">
+        <p class="text-wrapper-6">ТЁПЛОЕ МЕСТО</p>
+        <p class="text-wrapper-7">Тепло в каждой чашке</p>
+    </div>
+</section>
+
+<section aria-labelledby="favorites-title">
+    <h2 id="favorites-title" class="text-wrapper-8">Любимое с первого глотка</h2>
+    <div class="view">
+        <article class="view-3">
+            <div class="element-wrapper" aria-label="Изображение кофе">
+                <span class="text-wrapper">ФОТО / 01&nbsp;&nbsp; КОФЕ</span>
+            </div>
+            <h3 class="text-wrapper-9">Латте с карамелью</h3>
+            <p class="text-wrapper-5">Эспрессо · молоко · карамель</p>
+            <p class="text-wrapper-2">320 ₽ / 300 мл</p>
+        </article>
+        <article class="view-3">
+            <div class="element-wrapper" aria-label="Изображение кофе">
+                <span class="text-wrapper">ФОТО / 01&nbsp;&nbsp; КОФЕ</span>
+            </div>
+            <h3 class="text-wrapper-9">Капучино</h3>
+            <p class="text-wrapper-5">Эспрессо · молоко · карамель</p>
+            <p class="text-wrapper-2">290 ₽ / 250 мл</p>
+        </article>
+        <article class="view-3">
+            <div class="element-wrapper" aria-label="Изображение кофе">
+                <span class="text-wrapper">ФОТО / 01&nbsp;&nbsp; КОФЕ</span>
+            </div>
+            <h3 class="text-wrapper-9">Матча латте</h3>
+            <p class="text-wrapper-5">Эспрессо · молоко · карамель</p>
+            <p class="text-wrapper-2">350 ₽ / 300 мл</p>
+        </article>
+        <article class="view-3">
+            <div class="element-wrapper" aria-label="Изображение десерта">
+                <span class="text-wrapper">ФОТО / 01&nbsp;&nbsp; КОФЕ</span>
+            </div>
+            <h3 class="text-wrapper-9">Миндальный круассан</h3>
+            <p class="text-wrapper-5">Эспрессо · молоко · карамель</p>
+            <p class="text-wrapper-2">330 ₽ / 110 г</p>
+        </article>
+    </div>
+</section>
+
+<section class="view-4" aria-labelledby="custom-cup-title">
+    <h2 id="custom-cup-title" class="text-wrapper-10">Ваш кофе. Ваш характер.</h2>
+    <p class="text-wrapper-2">Украсьте стакан стикерами — маленькими деталями, которые делают утро вашим.</p>
+    <button class="view-5" type="button">
+        <span class="text-wrapper-11">Создать свой стакан</span>
+    </button>
+</section>
+
+<section class="view" aria-label="Наши особенности">
+    <article class="element">
+        <h2 class="text-wrapper-12">01 / Зёрна</h2>
+        <p class="text-wrapper-2">Обжариваем небольшими партиями каждую неделю.</p>
+    </article>
+    <article class="element">
+        <h2 class="text-wrapper-12">02 / Забота</h2>
+        <p class="text-wrapper-2">Альтернативное молоко и честный состав.</p>
+    </article>
+    <article class="element">
+        <h2 class="text-wrapper-12">03 / Рядом</h2>
+        <p class="text-wrapper-2">Тёплый кофе в пятнадцати минутах от вас.</p>
+    </article>
+</section>
+
+<section aria-labelledby="stories-title">
+    <h2 id="stories-title" class="text-wrapper-8">Записки за чашкой кофе</h2>
+    <div class="view">
+        <article class="view-6">
+            <div class="element-wrapper" aria-label="Изображение истории">
+                <span class="text-wrapper">ФОТО / 02&nbsp;&nbsp; ИСТОРИИ</span>
+            </div>
+            <h3 class="text-wrapper-9">Как рождается ваш утренний кофе</h3>
+            <p class="text-wrapper-5">Истории · 6 минут чтения</p>
+            <button class="text-wrapper-2" type="button">Читать историю →</button>
+        </article>
+        <article class="view-6">
+            <div class="element-wrapper" aria-label="Изображение истории">
+                <span class="text-wrapper">ФОТО / 02&nbsp;&nbsp; ИСТОРИИ</span>
+            </div>
+            <h3 class="text-wrapper-9">Как рождается ваш утренний кофе</h3>
+            <p class="text-wrapper-5">Истории · 6 минут чтения</p>
+            <button class="text-wrapper-2" type="button">Читать историю →</button>
+        </article>
+        <article class="view-6">
+            <div class="element-wrapper" aria-label="Изображение истории">
+                <span class="text-wrapper">ФОТО / 02&nbsp;&nbsp; ИСТОРИИ</span>
+            </div>
+            <h3 class="text-wrapper-9">Как рождается ваш утренний кофе</h3>
+            <p class="text-wrapper-5">Истории · 6 минут чтения</p>
+            <button class="text-wrapper-2" type="button">Читать историю →</button>
+        </article>
+    </div>
+</section>
+{% endblock %}

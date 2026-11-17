@@ -1,17 +1,48 @@
-<h1>Корзина</h1>
-<a href="{% url 'catalog' %}">Вернуться в каталог</a>
+{% extends 'core/base.html' %}
+{% load static %}
 
-{% if cart_items %}
-    <ul>
-    {% for item in cart_items %}
-        <li>
-            {{ item.product.name }} — {{ item.quantity }} шт. 
-            (Итого: {{ item.total }} руб.)
-            <a href="{% url 'cart_remove' item.product.id %}">Удалить</a>
-        </li>
-    {% endfor %}
-    </ul>
-    <h3>Общая сумма: {{ total_price }} руб.</h3>
-{% else %}
-    <p>Корзина пуста</p>
-{% endif %}
+{% block content %}
+<div class="view" style="min-height: 60vh;">
+    <h1 class="text-wrapper-4" style="margin-bottom: 30px;">Корзина</h1>
+
+    {% if cart_items %}
+        <div style="width: 100%; max-width: 800px; background: var(--tokens-color-white); padding: 30px; border-radius: var(--tokens-space-radius); box-shadow: 0px 4px 16px rgba(43, 33, 24, 0.05);">
+            
+            {% for item in cart_items %}
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--tokens-color-cream); padding: 15px 0;">
+                    <div>
+                        <div class="text-wrapper-12" style="font-size: 20px;">{{ item.product.name }}</div>
+                        <p class="text-wrapper-8">{{ item.quantity }} шт.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <span class="text-wrapper-5">{{ item.total }} ₽</span>
+                        <!-- Кнопка удаления -->
+                        <a href="{% url 'cart_remove' item.product.id %}" style="color: var(--tokens-color-error); font-family: var(--body-font-family); text-decoration: underline;">Удалить</a>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+                <h3 class="text-wrapper-12">Итого:</h3>
+                <h3 class="text-wrapper-12" style="font-size: 28px;">{{ total_price }} ₽</h3>
+            </div>
+            
+            <!-- Кнопка оформления заказа (пока ведет в никуда) -->
+            <a href="#" class="div-wrapper" style="margin-top: 20px; width: 100%; justify-content: center;">
+                <div class="text-wrapper-7">Оформить заказ</div>
+            </a>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="{% url 'catalog' %}" style="color: var(--tokens-color-coffee); text-decoration: underline;">← Вернуться в каталог</a>
+            </div>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 50px;">
+            <p class="text-wrapper-5">Ваша корзина пока пуста.</p>
+            <a href="{% url 'catalog' %}" class="div-wrapper" style="margin-top: 20px; display: inline-flex;">
+                <div class="text-wrapper-7">Перейти в каталог</div>
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
