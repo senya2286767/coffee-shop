@@ -108,11 +108,10 @@ body {
   line-height: 23.2px;
 }
 
-/* СЕКЦИИ И КАРТОЧКИ */
 .screen .view {
   display: flex;
-  width: 100%; /* Вместо 1312px */
-  align-items: flex-start;
+  width: 100%;
+  align-items: stretch; 
   gap: var(--tokens-space-s3);
   position: relative;
   flex: 0 0 auto;
@@ -120,11 +119,11 @@ body {
 
 .screen .view-2 {
   flex-direction: column;
-  flex: 1; /* Занимает 50% ширины */
+  flex: 1;
   align-items: flex-start;
   gap: var(--tokens-space-s3);
   padding: var(--tokens-space-s4);
-  background-color: var(--tokens-color-white); /* Исправил на белый, как на скрине */
+  background-color: transparent; 
   border-radius: var(--tokens-space-s2);
   display: flex;
   position: relative;
@@ -189,14 +188,21 @@ body {
 .screen .div-2 {
   display: flex;
   flex-direction: column;
-  flex: 1; /* Занимает 50% ширины */
-  min-height: 400px;
+  flex: 1;
   align-items: flex-start;
   gap: var(--tokens-space-s3);
   padding: var(--tokens-space-s4);
   position: relative;
   background-color: var(--tokens-color-coffee);
   border-radius: var(--tokens-space-s2);
+}
+
+.hero-coffee-img {
+    width: 100%;
+    height: 225px; 
+    object-fit: cover; 
+    border-radius: var(--tokens-space-s1); 
+    margin-top: auto; 
 }
 
 .screen .text-wrapper-6 {
@@ -406,4 +412,250 @@ body {
   .footer {
     flex-direction: column;
   }
+}
+
+/* Стиль для картинок внутри карточек */
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: transform 0.3s ease; /* Плавный эффект при наведении */
+}
+
+/* Легкий зум при наведении на карточку (по желанию) */
+.view-3:hover .product-image {
+    transform: scale(1.05);
+}
+
+/* --- СТИЛИ ДЛЯ СТРАНИЦЫ КАТАЛОГА --- */
+.catalog-layout {
+    display: flex;
+    gap: 32px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+/* Левая панель фильтров */
+.filter-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background-color: var(--tokens-color-white);
+    border-radius: var(--tokens-space-radius);
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+}
+
+.filter-title {
+    font-family: var(--display-font-family);
+    font-size: 24px;
+    color: var(--tokens-color-ink);
+    margin-bottom: 24px;
+}
+
+.filter-group {
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.filter-label {
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    margin-bottom: 4px;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-ink);
+    cursor: pointer;
+}
+
+.filter-checkbox input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--tokens-color-coffee);
+    cursor: pointer;
+}
+
+/* Ползунок цены */
+.price-slider {
+    padding: 10px 0;
+}
+.price-track {
+    width: 100%;
+    height: 4px;
+    background-color: var(--tokens-color-cream);
+    border-radius: 2px;
+    position: relative;
+}
+.price-fill {
+    position: absolute;
+    left: 10%;
+    right: 20%;
+    top: 0;
+    bottom: 0;
+    background-color: var(--tokens-color-coffee);
+    border-radius: 2px;
+}
+
+/* Кнопка Сбросить (по центру + тень) */
+.filter-reset {
+    display: block;
+    margin: 0 auto; /* Центрируем кнопку */
+    width: max-content; /* Ширина по размеру текста, а не на весь блок */
+    padding: 12px 32px;
+    background-color: var(--tokens-color-white);
+    border: 1px solid var(--tokens-color-cream);
+    border-radius: var(--tokens-space-controlradius);
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(43, 33, 24, 0.05); /* Легкая еле заметная тень */
+}
+
+.filter-reset:hover {
+    background-color: var(--tokens-color-cream);
+    box-shadow: 0 6px 16px rgba(43, 33, 24, 0.08);
+}
+
+/* Пагинация (сплошная белая плашка) */
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* Расстояние между цифрами */
+    margin-top: 40px;
+    background-color: var(--tokens-color-white);
+    border-radius: 20px;
+    padding: 12px 32px;
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+    width: fit-content; /* Плашка облегает содержимое */
+    align-self: flex-start; /* Не дает плате растянуться на всю ширину */
+}
+
+/* Кнопки внутри пагинации */
+.page-btn {
+    background-color: transparent; /* Убираем белый фон */
+    border: none;
+    padding: 0;
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    box-shadow: none; /* Убираем тени */
+}
+
+.page-btn:hover {
+    color: var(--tokens-color-ink);
+}
+
+/* Активная страница */
+.page-btn.active {
+    font-weight: 700; /* Жирный шрифт */
+    color: var(--tokens-color-ink);
+}
+
+/* Стрелки */
+.page-btn.arrow {
+    font-size: 16px;
+}
+/* Правая часть с товарами */
+.catalog-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.catalog-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+/* Сетка товаров в 3 колонки */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    width: 100%;
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background-color: var(--tokens-color-white);
+    border-radius: var(--tokens-space-radius);
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Пагинация */
+.pagination {
+    display: flex;
+    gap: 8px;
+    margin-top: 40px;
+    justify-content: flex-start;
+}
+
+.page-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--tokens-color-white);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(43, 33, 24, 0.05);
+    transition: all 0.2s ease;
+}
+
+.page-btn:hover {
+    background-color: var(--tokens-color-cream);
+}
+
+.page-btn.active {
+    background-color: var(--tokens-color-white);
+    font-weight: bold;
+    color: var(--tokens-color-ink);
+}
+
+/* Адаптив для каталога */
+@media (max-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .catalog-layout {
+        flex-direction: column;
+    }
+    .filter-sidebar {
+        width: 100%;
+    }
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
 }

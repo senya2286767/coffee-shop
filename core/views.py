@@ -2,8 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Product, Category
 
+def index(request):
+    """Главная страница кофейни (без вывода товаров)"""
+    return render(request, 'core/index.html')
+
 def catalog(request):
-    """Главная страница с товарами"""
+    """Страница каталога с товарами"""
     products = Product.objects.filter(is_available=True)
     categories = Category.objects.all()
     
@@ -49,7 +53,9 @@ def cart_add(request, product_id):
 
     request.session['cart'] = cart
     messages.success(request, f'Товар «{product.name}» добавлен в корзину!')
-    return redirect('catalog')
+    
+    # Возвращаем пользователя туда, откуда он пришел (в каталог или на главную)
+    return redirect(request.META.get('HTTP_REFERER', 'catalog'))
 
 def cart_remove(request, product_id):
     """Удаление товара из корзины"""

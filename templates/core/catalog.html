@@ -2,42 +2,99 @@
 {% load static %}
 
 {% block content %}
-<header>
-    <h1 class="div" style="margin-bottom: 20px;">Наш кофе</h1>
-</header>
+<div class="catalog-page">
+    <!-- Хлебные крошки -->
+    <p class="text-wrapper" style="margin-bottom: 24px;">Главная / Каталог</p>
+    
+    <!-- Заголовок -->
+    <h1 class="div" style="margin-bottom: 12px;">Каталог</h1>
+    <p class="text-wrapper-2" style="margin-bottom: 40px; color: var(--tokens-color-coffee);">
+        Найдите свой вкус. Приготовим к вашему приходу.
+    </p>
 
-<!-- Фильтры категорий -->
-<div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
-    <a href="/" class="view-5" style="width: auto; padding: 10px 20px; text-decoration: none; height: auto;">
-        <span class="text-wrapper-11">Все</span>
-    </a>
-    {% for cat in categories %}
-        <a href="/?category={{ cat.slug }}" class="view-5" style="width: auto; padding: 10px 20px; text-decoration: none; height: auto; background-color: var(--tokens-color-white);">
-            <span class="text-wrapper-11">{{ cat.name }}</span>
-        </a>
-    {% endfor %}
-</div>
-
-<div class="view">
-    {% for product in products %}
-        <article class="view-3">
-            <div class="element-wrapper">
-                {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                {% else %}
-                    <span class="text-wrapper">ФОТО / 01&nbsp;&nbsp; КОФЕ</span>
-                {% endif %}
-            </div>
-            <h3 class="text-wrapper-9">{{ product.name }}</h3>
-            <p class="text-wrapper-5">{{ product.description|default:"Эспрессо · молоко · карамель" }}</p>
-            <p class="text-wrapper-2">{{ product.price }} ₽</p>
+    <!-- Сетка: Фильтры слева + Товары справа -->
+    <div class="catalog-layout">
+        
+        <!-- ЛЕВАЯ ПАНЕЛЬ С ФИЛЬТРАМИ -->
+        <aside class="filter-sidebar">
+            <h3 class="filter-title">Фильтры</h3>
             
-            <a href="{% url 'cart_add' product.id %}" class="div-wrapper" style="width: 100%; text-decoration: none; margin-top: 10px;">
-                <span class="text-wrapper-4">В корзину</span>
-            </a>
-        </article>
-    {% empty %}
-        <p class="text-wrapper-2">Товаров пока нет. Добавьте их через админку.</p>
-    {% endfor %}
+            <div class="filter-group">
+                <p class="filter-label">Категории</p>
+                <!-- Цикл по категориям из базы данных -->
+                <label class="filter-checkbox">
+                    <input type="checkbox" checked>
+                    <span>Все</span>
+                </label>
+                {% for cat in categories %}
+                <label class="filter-checkbox">
+                    <input type="checkbox">
+                    <span>{{ cat.name }}</span>
+                </label>
+                {% endfor %}
+            </div>
+
+            <div class="filter-group">
+                <p class="filter-label">Цена · 190 — 650 ₽</p>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-checkbox">
+                    <input type="checkbox">
+                    <span>Без лактозы</span>
+                </label>
+                <label class="filter-checkbox">
+                    <input type="checkbox">
+                    <span>Без сахара</span>
+                </label>
+            </div>
+
+            <button class="filter-reset" type="button">Сбросить</button>
+        </aside>
+
+        <!-- ПРАВАЯ ЧАСТЬ: ТОВАРЫ -->
+        <div class="catalog-main">
+            
+            <!-- Верхняя панель (Количество и Сортировка) -->
+            <div class="catalog-top-bar">
+                <span class="text-wrapper-2">Найдено {{ products|length }} товаров</span>
+                <span class="text-wrapper-2" style="cursor: pointer;">По популярности ↓</span>
+            </div>
+
+            <!-- Сетка товаров (3 колонки) -->
+            <div class="product-grid">
+                {% for product in products %}
+                    <article class="view-3 product-card">
+                        <div class="element-wrapper">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                            {% else %}
+                                <span class="text-wrapper">ФОТО / 01&nbsp;&nbsp; КОФЕ</span>
+                            {% endif %}
+                        </div>
+                        <h3 class="text-wrapper-9">{{ product.name }}</h3>
+                        <p class="text-wrapper-5">{{ product.description|default:"Эспрессо · молоко · карамель" }}</p>
+                        <p class="text-wrapper-2" style="font-weight: 500;">{{ product.price }} ₽</p>
+                        
+                        <!-- Кнопка добавления в корзину -->
+                        <a href="{% url 'cart_add' product.id %}" class="div-wrapper" style="width: 100%; text-decoration: none; margin-top: 10px; height: 40px;">
+                            <span class="text-wrapper-4">В корзину</span>
+                        </a>
+                    </article>
+                {% empty %}
+                    <p class="text-wrapper-2">Товаров пока нет. Добавьте их через админку.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Пагинация (Визуальная заглушка) -->
+            <div class="pagination">
+                <button class="page-btn arrow">←</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn arrow">→</button>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
