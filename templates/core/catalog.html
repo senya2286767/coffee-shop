@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Кофейня</title>
+</head>
+<body>
+    <h1>Наш кофе</h1>
+    
+    <div>
+        <b>Категории:</b>
+        <a href="/">Все</a>
+        {% for cat in categories %}
+            | <a href="/?category={{ cat.slug }}">{{ cat.name }}</a>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        {% for product in products %}
+            <div style="border: 1px solid #ccc; padding: 10px; width: 200px;">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%;">
+                {% endif %}
+                <h3>{{ product.name }}</h3>
+                <p>Цена: {{ product.price }} руб.</p>
+                
+                <a href="{% url 'cart_add' product.id %}">
+                    <button style="cursor: pointer; padding: 5px 10px;">Добавить в корзину</button>
+                </a>
+            </div>
+        {% empty %}
+            <p>Товаров пока нет. Добавьте их через админку.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
