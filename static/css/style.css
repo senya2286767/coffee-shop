@@ -3,17 +3,16 @@ body {
   background-color: var(--tokens-color-cream);
   display: flex;
   flex-direction: column;
-  align-items: center;
   min-height: 100vh;
+  width: 100%;
 }
 
 .navbar {
   display: flex;
   width: 100%;
-  max-width: 1440px; /* Вместо жестких 1440px */
   align-items: center;
   justify-content: space-between;
-  padding: var(--tokens-space-s3) var(--tokens-space-s8);
+  padding: var(--tokens-space-s3) max(var(--tokens-space-s8), calc((100% - 1440px) / 2));
   background-color: var(--tokens-color-white);
   box-sizing: border-box;
 }
@@ -330,29 +329,27 @@ body {
 }
 
 /* БЛОГ */
-.screen .view-6 {
-  flex-direction: column;
-  flex: 1;
-  min-width: 250px;
-  align-items: flex-start;
-  gap: 12px;
-  padding: var(--tokens-space-s2);
-  background-color: var(--tokens-color-white);
-  border-radius: 12px;
-  box-shadow: 0 4px 16px #2b21160d;
+.screen {
   display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1440px;
+  align-items: flex-start;
+  gap: var(--tokens-space-s4);
+  padding: var(--tokens-space-s5) var(--tokens-space-s8) var(--tokens-space-s8);
   position: relative;
+  box-sizing: border-box;
+  margin: 0 auto; /* <-- ДОБАВИТЬ ДЛЯ ЦЕНТРИРОВАНИЯ */
 }
 
 /* --- ПОДВАЛ --- */
 .footer {
   width: 100%;
-  max-width: 1440px; /* Вместо 1440px */
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--tokens-space-s3);
-  padding: var(--tokens-space-s5) var(--tokens-space-s8);
+  padding: var(--tokens-space-s5) max(var(--tokens-space-s8), calc((100% - 1440px) / 2));
   background-color: var(--tokens-color-ink);
   box-sizing: border-box;
   margin-top: auto; /* Прижимаем к низу */

@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse, FileResponse
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.template.loader import get_template
 from django.db.models import Count, Sum
@@ -305,3 +306,16 @@ def register_view(request):
             return redirect('profile') # <-- Сюда перенаправляем после регистрации
 
     return render(request, 'core/register.html')
+
+@login_required
+def profile_view(request):
+    # Получаем все заказы текущего пользователя (от новых к старым)
+    user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    
+    return render(request, 'core/profile.html', {
+        'orders': user_orders
+    })
+
+def logout_view(request):
+    logout(request)
+    return redirect('catalog')
