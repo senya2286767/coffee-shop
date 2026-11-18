@@ -1,0 +1,56 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="auth-page">
+    <!-- Хлебные крошки -->
+    <p class="breadcrumbs">Главная / Рады видеть вас снова</p>
+
+    <!-- Заголовок -->
+    <h1 class="page-title">Рады видеть вас снова</h1>
+    <p class="page-subtitle">Войдите, чтобы сохранить любимое и следить за заказами.</p>
+
+    <div class="auth-layout">
+        <!-- ЛЕВАЯ КОЛОНКА: Картинка -->
+        <div class="auth-image-block">
+            <span class="placeholder-text">ФОТО-ПЛЕЙСХОЛДЕР</span>
+            <p class="quote-text">У каждого утра<br>есть своя история.</p>
+        </div>
+
+        <!-- ПРАВАЯ КОЛОНКА: Форма -->
+        <div class="auth-form-container">
+            <h2 class="auth-form-title">Вход</h2>
+            
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <!-- Вывод ошибок, если пароль неверный -->
+                {% if form.errors %}
+                    <div style="color: red; margin-bottom: 16px; font-family: var(--body-font-family);">
+                        Неверная почта или пароль.
+                    </div>
+                {% endif %}
+
+                <div class="input-group">
+                    <label>Электронная почта</label>
+                    <input type="email" name="email" placeholder="anna@example.ru" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Пароль</label>
+                    <input type="password" name="password" placeholder="••••••••••••" required>
+                </div>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" name="remember_me" checked>
+                    <span class="custom-checkbox"></span>
+                    Запомнить меня
+                </label>
+
+                <button type="submit" class="btn-primary auth-submit-btn">Войти</button>
+            </form>
+            
+            <a href="{% url 'register' %}" class="btn-secondary auth-switch-btn">Создать аккаунт</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

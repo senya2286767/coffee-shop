@@ -268,3 +268,40 @@ def save_stickers(request):
         except json.JSONDecodeError:
             return JsonResponse({'success': False}, status=400)
     return JsonResponse({'success': False}, status=400)
+
+def login_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        # Ищем пользователя по email (стандартный authenticate ищет по username)
+        try:
+            user_obj = User.objects.get(email=email)
+            user = authenticate(request, username=user_obj.username, password=password)
+        except User.DoesNotExist:
+            user = None
+
+        if user is not None:
+            login(request, user)
+            return redirect('profile') # <-- Сюда перенаправляем после входа (например, в профиль)
+        else:
+            messages.error(request, "Неверная почта или пароль")
+            
+    return render(request, 'core/login.html')
+
+
+def register_view(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Пользователь с такой почтой уже существует")
+        else:
+            # Создаем нового пользователя. В качестве username используем email.
+            user = User.objects.create_user(username=email, email=email, password=password, first_name=first_name)
+            login(request, user)
+            return redirect('profile') # <-- Сюда перенаправляем после регистрации
+
+    return render(request, 'core/register.html')

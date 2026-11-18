@@ -1681,3 +1681,172 @@ body {
         width: 100%;
     }
 }
+
+/* --- СТИЛИ ДЛЯ ВХОДА И РЕГИСТРАЦИИ --- */
+.auth-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.auth-page .breadcrumbs {
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    margin-bottom: 24px;
+}
+
+.auth-page .page-title {
+    font-family: var(--display-font-family);
+    font-size: 48px;
+    color: var(--tokens-color-ink);
+    margin: 0 0 12px 0;
+    line-height: 1.1;
+}
+
+.auth-page .page-subtitle {
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    color: var(--tokens-color-coffee);
+    margin: 0 0 40px 0;
+}
+
+/* Сетка (2 колонки) */
+.auth-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    align-items: stretch;
+    width: 100%;
+}
+
+/* Левая колонка с картинкой */
+.auth-image-block {
+    flex: 1;
+    background-color: var(--tokens-color-coffee);
+    border-radius: var(--tokens-space-radius);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Разносит текст по краям */
+    min-height: 500px;
+}
+
+.placeholder-text {
+    font-family: var(--body-font-family);
+    font-size: 12px;
+    color: var(--tokens-color-cream);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+}
+
+.quote-text {
+    font-family: var(--display-font-family);
+    font-size: 36px;
+    color: var(--tokens-color-cream);
+    line-height: 1.2;
+    margin: 0;
+}
+
+/* Правая колонка с формой */
+.auth-form-container {
+    flex: 1;
+    background-color: var(--tokens-color-white);
+    border-radius: var(--tokens-space-radius);
+    padding: 48px;
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-form-title {
+    font-family: var(--display-font-family);
+    font-size: 32px;
+    color: var(--tokens-color-ink);
+    margin: 0 0 32px 0;
+}
+
+/* Кастомный чекбокс */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-ink);
+    cursor: pointer;
+    margin-bottom: 24px;
+    margin-top: -8px;
+}
+
+.checkbox-label input {
+    display: none; /* Прячем стандартный */
+}
+
+.custom-checkbox {
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--tokens-color-coffee);
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+    background-color: var(--tokens-color-white);
+}
+
+.checkbox-label input:checked + .custom-checkbox {
+    background-color: var(--tokens-color-coffee);
+}
+
+.checkbox-label input:checked + .custom-checkbox::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Кнопки */
+.auth-submit-btn {
+    width: 100%;
+    max-width: 100% !important;
+    margin-bottom: 16px !important;
+}
+
+.auth-switch-btn {
+    width: 100%;
+    max-width: 100% !important;
+    background-color: #faf9f7 !important; /* Светлый фон */
+    border: none !important;
+    color: var(--tokens-color-coffee) !important;
+}
+
+.auth-switch-btn:hover {
+    background-color: var(--tokens-color-cream) !important;
+}
+
+/* Адаптив */
+@media (max-width: 900px) {
+    .auth-layout {
+        flex-direction: column;
+    }
+    .auth-image-block {
+        min-height: 300px;
+    }
+    .quote-text {
+        font-size: 28px;
+    }
+    .auth-form-container {
+        padding: 32px 24px;
+    }
+    .auth-page .page-title {
+        font-size: 36px;
+    }
+}
