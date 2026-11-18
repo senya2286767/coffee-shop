@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Product, Category
+from .models import Product, Category, Order, OrderItem
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 def index(request):
     """Главная страница кофейни (без вывода товаров)"""
@@ -74,3 +78,50 @@ def product_detail(request, product_id):
 def sticker_page(request):
     """Страница кастомизации стакана стикерами"""
     return render(request, 'core/sticker.html')
+
+@login_required
+def checkout(request):
+    """Оформление заказа из корзины"""
+    cart = request.session.get('cart', {})
+    if not cart:
+        messages.warning(request, 'Ваша корзина пуста.')
+        return redirect('cart_detail')
+
+    order = Order.objects.create(user=request.user)
+    total_price = 0
+
+    for product_id, quantity in cart.items():
+        product = get_object_or_404(Product, id=product_id)
+        item_price = product.price * quantity
+        total_price += item_price
+        
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=quantity,
+            price=product.price
+        )
+
+    order.total_price = total_price
+    order.save()
+    request.session['cart'] = {} 
+
+    messages.success(request, 'Заказ успешно оформлен!')
+    return redirect('receipt', order_id=order.id)
+
+
+@login_required
+def receipt(request, order_id):
+    """Генерация PDF-чека"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    template = get_template('core/receipt_pdf.html')
+    html = template.render({'order': order})
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="receipt_{order.id}.pdf"'
+    
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse('Ошибка при создании PDF', status=500)
+        
+    return response
