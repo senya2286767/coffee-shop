@@ -16,6 +16,8 @@ urlpatterns = [
     path('cart/remove/<int:product_id>/', views.cart_remove, name='cart_remove'),
 
     path('product/<int:product_id>/', views.product_detail, name='product_detail'),
+
+    path('sticker/', views.sticker_page, name='sticker_page'),
 ]
 
 if settings.DEBUG:

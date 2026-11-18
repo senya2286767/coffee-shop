@@ -15,11 +15,16 @@
         
         <!-- ЛЕВАЯ ЧАСТЬ (Фото и Табы) -->
         <div class="product-detail-left">
-            <!-- Блок с фото -->
+            
+            <!-- Блок с фото (Коричневая рамка) -->
             <div class="product-hero-img">
-                <p class="text-wrapper" style="color: var(--tokens-color-cream);">ТЁПЛОЕ МЕСТО / ФОТО</p>
-                <h2 class="text-wrapper-7" style="margin: auto 0;">{{ product.name }}</h2>
-                <p class="text-wrapper" style="color: var(--tokens-color-cream); margin-top: auto;">Место для вашей фотографии ↗</p>
+                <div class="detail-image-wrapper">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="detail-image">
+                    {% else %}
+                        <p class="text-wrapper" style="color: var(--tokens-color-coffee);">Нет фото</p>
+                    {% endif %}
+                </div>
             </div>
 
             <!-- Табы -->
@@ -29,14 +34,18 @@
                 <button class="tab-btn">Отзывы</button>
             </div>
 
-            <!-- Контент состава (пока статичный) -->
+            <!-- Контент состава (выводим из базы) -->
             <div class="product-tab-content">
                 <h3 class="text-wrapper-12" style="margin-bottom: 16px;">Состав и пищевая ценность</h3>
+                
+                <!-- Если напарник добавил поле composition, оно выведется тут -->
                 <p class="text-wrapper-2" style="margin-bottom: 8px;">
-                    Эспрессо, молоко, карамельный соус. Содержит молоко.
+                    {{ product.composition|default:"Эспрессо, молоко, карамельный соус. Содержит молоко." }}
                 </p>
+                
+                <!-- Если напарник добавил поле nutritional_value, оно выведется тут -->
                 <p class="text-wrapper-2">
-                    На 100 мл: 64 ккал · белки 2,1 г · жиры 3,2 г · углеводы 6,8 г.
+                    {{ product.nutritional_value|default:"На 100 мл: 64 ккал · белки 2,1 г · жиры 3,2 г · углеводы 6,8 г." }}
                 </p>
             </div>
         </div>
@@ -57,7 +66,7 @@
                 <button class="volume-btn">400 мл</button>
             </div>
 
-            <!-- Выбор молока -->
+            <!-- Выбор молока (оставляем как было) -->
             <div class="milk-selector">
                 <p class="text-wrapper" style="margin: 0;">Молоко</p>
                 <select class="milk-dropdown">
@@ -71,7 +80,7 @@
             <!-- Цена -->
             <h2 class="div" style="font-size: 48px; margin: 24px 0;">{{ product.price }} ₽</h2>
 
-            <!-- Кнопки -->
+            <!-- Кнопки (сделал уже, как на макете) -->
             <a href="{% url 'cart_add' product.id %}" class="btn-primary">
                 Добавить в корзину
             </a>

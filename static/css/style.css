@@ -724,13 +724,78 @@ body {
 /* Блок с фото (Коричневый) */
 .product-hero-img {
     width: 100%;
-    height: 400px;
-    background-color: var(--tokens-color-coffee);
+    height: 450px;
+    background-color: var(--tokens-color-coffee); /* Коричневый фон */
     border-radius: var(--tokens-space-radius);
-    padding: 32px;
+    padding: 24px; /* Отступы, создающие рамку */
     display: flex;
-    flex-direction: column;
-    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+.detail-image-wrapper {
+    width: 100%;
+    height: 100%;
+    background-color: var(--tokens-color-white);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Сама картинка внутри белой рамки */
+.detail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Вписывает картинку целиком, не обрезая края */
+    display: block;
+    padding: 10px; /* Небольшой отступ, чтобы фото не прилипало вплотную к краям белого блока */
+}
+
+/* Кнопки покупки (сделал не на всю ширину, как на скрине) */
+.btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 320px; /* Ограничиваем ширину */
+    padding: 16px;
+    background-color: var(--tokens-color-coffee);
+    color: var(--tokens-color-white);
+    border: none;
+    border-radius: var(--tokens-space-controlradius);
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-bottom: 12px;
+}
+
+.btn-primary:hover {
+    background-color: var(--tokens-color-ink);
+}
+
+.btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 320px; /* Ограничиваем ширину */
+    padding: 16px;
+    background-color: var(--tokens-color-white);
+    color: var(--tokens-color-coffee);
+    border: 1px solid var(--tokens-color-cream);
+    border-radius: var(--tokens-space-controlradius);
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--tokens-color-cream);
 }
 
 /* Табы */
@@ -860,5 +925,146 @@ body {
     }
     .product-hero-img {
         height: 300px;
+    }
+}
+
+
+/* --- СТИЛИ ДЛЯ СТРАНИЦЫ СТИКЕРОВ --- */
+.sticker-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr 300px;
+    gap: 24px;
+    width: 100%;
+    align-items: stretch;
+}
+
+/* Левая колонка (Палитра) */
+.sticker-palette {
+    background-color: var(--tokens-color-white);
+    padding: 24px;
+    border-radius: var(--tokens-space-radius);
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+    display: flex;
+    flex-direction: column;
+}
+
+.sticker-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.sticker-tabs .tab-btn {
+    background: none;
+    border: none;
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    cursor: pointer;
+    padding: 0;
+}
+
+.sticker-tabs .tab-btn.active {
+    color: var(--tokens-color-ink);
+    font-weight: 500;
+}
+
+.sticker-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Сам стикер в палитре */
+.sticker-item {
+    background-color: var(--tokens-color-cream);
+    padding: 16px;
+    border-radius: var(--tokens-space-controlradius);
+    text-align: center;
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    cursor: grab; /* Курсор-рука */
+    user-select: none;
+}
+
+.sticker-item:active {
+    cursor: grabbing;
+}
+
+/* Центральная колонка (Коричневый фон) */
+.sticker-canvas-wrapper {
+    background-color: var(--tokens-color-coffee);
+    border-radius: var(--tokens-space-radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Белый стакан (зона дропа) */
+.sticker-drop-zone {
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+    background-color: var(--tokens-color-cream);
+    border-radius: var(--tokens-space-radius);
+    position: relative; /* Важно для абсолютного позиционирования стикеров */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Чтобы стикеры не вылетали за края */
+}
+
+/* Заглушка "Тёплое место" */
+.sticker-placeholder {
+    font-family: var(--display-font-family);
+    font-size: 48px;
+    color: var(--tokens-color-coffee);
+    text-align: center;
+    line-height: 1.1;
+    pointer-events: none; /* Чтобы текст не мешал кликать */
+}
+
+/* Стикер, который уже упал на стакан */
+.dropped-sticker {
+    position: absolute;
+    background-color: var(--tokens-color-white);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-family: var(--body-font-family);
+    font-size: 12px;
+    color: var(--tokens-color-coffee);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translate(-50%, -50%); /* Центрируем по курсору */
+    pointer-events: none; /* Чтобы стикер нельзя было случайно перетащить */
+    white-space: nowrap;
+}
+
+/* Правая колонка (Итог) */
+.sticker-summary {
+    background-color: var(--tokens-color-white);
+    padding: 24px;
+    border-radius: var(--tokens-space-radius);
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+/* Адаптив для мобильных */
+@media (max-width: 1024px) {
+    .sticker-layout {
+        grid-template-columns: 1fr;
+    }
+    .sticker-canvas-wrapper {
+        min-height: 500px;
     }
 }

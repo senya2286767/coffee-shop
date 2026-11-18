@@ -71,3 +71,7 @@ def product_detail(request, product_id):
     """Страница конкретного товара"""
     product = get_object_or_404(Product, id=product_id)
     return render(request, 'core/product_detail.html', {'product': product})
+
+def sticker_page(request):
+    """Страница кастомизации стакана стикерами"""
+    return render(request, 'core/sticker.html')

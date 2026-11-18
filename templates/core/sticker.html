@@ -1,0 +1,153 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="catalog-page">
+    <!-- Хлебные крошки -->
+    <p class="text-wrapper" style="margin-bottom: 24px;">Главная / Стакан с вашим характером</p>
+    
+    <!-- Заголовок -->
+    <h1 class="div" style="margin-bottom: 12px;">Стакан с вашим характером</h1>
+    <p class="text-wrapper-2" style="margin-bottom: 40px; color: var(--tokens-color-coffee);">
+        Перетащите стикер на стакан. Набор стикеров — бесплатно к напитку.
+    </p>
+
+    <!-- Сетка из 3 колонок -->
+    <div class="sticker-layout">
+        
+        <!-- ЛЕВАЯ КОЛОНКА: Палитра стикеров -->
+        <aside class="sticker-palette">
+            <h3 class="filter-title" style="margin-bottom: 16px;">Стикеры</h3>
+            
+            <div class="sticker-tabs">
+                <button class="tab-btn active">Все</button>
+                <button class="tab-btn">Настроение</button>
+                <button class="tab-btn">Сезон</button>
+            </div>
+
+            <div class="sticker-list" id="sticker-list">
+                <div class="sticker-item" draggable="true">С собой — тепло</div>
+                <div class="sticker-item" draggable="true">Кофе сначала</div>
+                <div class="sticker-item" draggable="true">Мой тихий час</div>
+                <div class="sticker-item" draggable="true">Хороший день</div>
+            </div>
+        </aside>
+
+        <!-- ЦЕНТРАЛЬНАЯ КОЛОНКА: Стакан (Зона для дропа) -->
+        <div class="sticker-canvas-wrapper">
+            <div class="sticker-canvas-container">
+                <p class="text-wrapper" style="color: var(--tokens-color-cream); margin-bottom: 16px;">ВАШ ЛАТТЕ</p>
+                
+                <!-- Сам стакан (сюда падают стикеры) -->
+                <div class="sticker-drop-zone" id="drop-zone">
+                    <div class="sticker-placeholder" id="placeholder">
+                        Тёплое<br>место
+                    </div>
+                </div>
+            </div>
+            <p class="text-wrapper" style="color: var(--tokens-color-cream); margin-top: 16px;">Потяните стикер сюда</p>
+        </div>
+
+        <!-- ПРАВАЯ КОЛОНКА: Итог -->
+        <aside class="sticker-summary">
+            <h3 class="text-wrapper-10" style="font-size: 24px; margin-bottom: 16px;">Латте · 300 мл</h3>
+            
+            <div class="summary-details">
+                <p class="text-wrapper-2">Стакан / кремовый</p>
+                <p class="text-wrapper-2">Стикеры / <span id="sticker-count">0</span> до 3 штук</p>
+                <p class="text-wrapper-2" style="font-weight: 500;">Цена / 320 ₽</p>
+            </div>
+
+            <button class="btn-primary" style="margin-top: 24px;" onclick="addToCartWithStickers()">
+                Готово, в корзину
+            </button>
+            
+            <button class="btn-secondary" style="margin-top: 12px;" onclick="resetStickers()">
+                Начать заново
+            </button>
+        </aside>
+
+    </div>
+</div>
+
+<!-- СКРИПТ ДЛЯ DRAG-AND-DROP -->
+<script>
+    const stickers = document.querySelectorAll('.sticker-item');
+    const dropZone = document.getElementById('drop-zone');
+    const placeholder = document.getElementById('placeholder');
+    const countDisplay = document.getElementById('sticker-count');
+    
+    let placedStickersCount = 0;
+    const MAX_STICKERS = 3;
+
+    // 1. Начинаем перетаскивание
+    stickers.forEach(sticker => {
+        sticker.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', sticker.innerText);
+            e.dataTransfer.effectAllowed = 'copy';
+        });
+    });
+
+    // 2. Разрешаем дроп (без этого не работает)
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault(); 
+        e.dataTransfer.dropEffect = 'copy';
+    });
+
+    // 3. Обрабатываем дроп
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        
+        // Проверяем лимит
+        if (placedStickersCount >= MAX_STICKERS) {
+            alert('Максимум 3 стикера на один стакан!');
+            return;
+        }
+
+        const stickerText = e.dataTransfer.getData('text/plain');
+        
+        // Скрываем надпись "Тёплое место"
+        if (placeholder) {
+            placeholder.style.display = 'none';
+        }
+
+        // Создаем новый стикер
+        const newSticker = document.createElement('div');
+        newSticker.className = 'dropped-sticker';
+        newSticker.innerText = stickerText;
+        
+        // Вычисляем позицию курсора мыши внутри стакана
+        const rect = dropZone.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // Ставим стикер туда, куда упала мышь
+        newSticker.style.left = `${x}px`;
+        newSticker.style.top = `${y}px`;
+        
+        // Добавляем на стакан
+        dropZone.appendChild(newSticker);
+        
+        // Обновляем счетчик
+        placedStickersCount++;
+        countDisplay.innerText = placedStickersCount;
+    });
+
+    // 4. Сброс
+    function resetStickers() {
+        const dropped = document.querySelectorAll('.dropped-sticker');
+        dropped.forEach(el => el.remove());
+        placedStickersCount = 0;
+        countDisplay.innerText = 0;
+        if (placeholder) {
+            placeholder.style.display = 'block';
+        }
+    }
+
+    // 5. Заглушка для корзины
+    function addToCartWithStickers() {
+        alert(`Латте со стикерами добавлен в корзину! Выбрано стикеров: ${placedStickersCount}`);
+        // Позже напарник заменит это на отправку запроса в Django
+    }
+</script>
+{% endblock %}

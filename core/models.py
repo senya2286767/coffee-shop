@@ -18,6 +18,10 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', verbose_name='Категория')
     name = models.CharField(max_length=200, verbose_name='Название')
     description = models.TextField(blank=True, verbose_name='Описание')
+    
+    composition = models.TextField(blank=True, verbose_name='Состав')
+    nutritional_value = models.TextField(blank=True, verbose_name='КБЖУ')
+    
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
     image = models.ImageField(upload_to='products/', blank=True, null=True, verbose_name='Фото')
     is_available = models.BooleanField(default=True, verbose_name='В наличии')
