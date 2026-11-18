@@ -17,6 +17,8 @@ urlpatterns = [
     path('sticker/', views.sticker_page, name='sticker_page'),
         path('checkout/', views.checkout, name='checkout'),
     path('receipt/<int:order_id>/', views.receipt, name='receipt'),
+        path('blog/', views.blog_list, name='blog_list'),
+    path('blog/<int:post_id>/', views.blog_detail, name='blog_detail'),
 ]
 
 if settings.DEBUG:

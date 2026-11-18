@@ -1,0 +1,10 @@
+<a href="{% url 'blog_list' %}">← Назад к блогу</a>
+<hr>
+<h1>{{ post.title }}</h1>
+<p><small>Опубликовано: {{ post.created_at|date:"d.m.Y" }}</small></p>
+{% if post.image %}
+    <img src="{{ post.image.url }}" style="max-width: 100%; max-height: 400px;">
+{% endif %}
+<div style="margin-top: 20px;">
+    {{ post.content|linebreaks }}
+</div>

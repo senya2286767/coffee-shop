@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Product, Category, Order, OrderItem
+from .models import Product, Category, Order, OrderItem, BlogPost
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.template.loader import get_template
@@ -125,3 +125,14 @@ def receipt(request, order_id):
         return HttpResponse('Ошибка при создании PDF', status=500)
         
     return response
+
+def blog_list(request):
+    """Страница со списком всех статей"""
+    posts = BlogPost.objects.all().order_by('-created_at')
+    return render(request, 'core/blog_list.html', {'posts': posts})
+
+
+def blog_detail(request, post_id):
+    """Страница одной статьи"""
+    post = get_object_or_404(BlogPost, id=post_id)
+    return render(request, 'core/blog_detail.html', {'post': post})
