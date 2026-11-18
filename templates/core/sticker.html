@@ -141,8 +141,29 @@
         }
     }
 
-    function addToCartWithStickers() {
-        alert(`Латте со стикерами добавлен в корзину! Выбрано стикеров: ${placedStickersCount}`);
+        function addToCartWithStickers() {
+        // 1. Собираем текст всех прилепленных стикеров
+        const droppedElements = document.querySelectorAll('.dropped-sticker');
+        const stickersArray = Array.from(droppedElements).map(el => el.innerText);
+
+        // 2. Отправляем их на сервер (AJAX)
+        fetch('/sticker/save/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'  // Обязательно для Django!
+            },
+            body: JSON.stringify({ stickers: stickersArray })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // 3. Если сохранилось успешно — перекидываем пользователя в корзину
+                window.location.href = "{% url 'cart_detail' %}";
+            } else {
+                alert('Ошибка при сохранении стикеров');
+            }
+        });
     }
 </script>
 {% endblock %}

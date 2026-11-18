@@ -154,13 +154,12 @@ def checkout(request):
             )
 
         # Логика стикеров (принимаем из формы)
-        stickers_raw = request.POST.get('stickers_data', '[]')
-        try:
-            stickers_list = json.loads(stickers_raw)
-            if isinstance(stickers_list, list):
-                order.stickers = stickers_list
-        except json.JSONDecodeError:
-            pass
+            # Забираем стикеры из сессии (их туда положил скрипт напарника)
+    stickers_list = request.session.get('selected_stickers', [])
+    if stickers_list:
+        order.stickers = stickers_list
+        # Очищаем сессию после того, как перенесли их в заказ
+        del request.session['selected_stickers']
 
         order.save()
         request.session['cart'] = {}
@@ -257,3 +256,15 @@ def register(request):
     else:
         form = RegisterForm()
     return render(request, 'core/register.html', {'form': form})
+
+def save_stickers(request):
+    """Сохранение стикеров в сессию (принимает AJAX-запрос от JS)"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            stickers = data.get('stickers', [])
+            request.session['selected_stickers'] = stickers
+            return JsonResponse({'success': True, 'stickers': stickers})
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False}, status=400)
+    return JsonResponse({'success': False}, status=400)

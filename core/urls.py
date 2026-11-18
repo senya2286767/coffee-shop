@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/stats/popular/', views.stats_popular_products, name='api_stats_popular'),
     path('api/stats/orders/', views.stats_orders_by_day, name='api_stats_orders'),
     path('register/', views.register, name='register'),
+        path('sticker/save/', views.save_stickers, name='save_stickers'),
 ]
 
 if settings.DEBUG:
