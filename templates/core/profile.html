@@ -1,0 +1,64 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-page">
+    <!-- Хлебные крошки -->
+    <p class="breadcrumbs">Главная / Мои заказы</p>
+
+    <!-- Заголовок -->
+    <h1 class="page-title">Мои заказы</h1>
+    <p class="page-subtitle">Здравствуйте, {{ user.first_name|default:user.username }}. Здесь всё, что вам нужно.</p>
+
+    <!-- Сетка из 2 колонок -->
+    <div class="profile-layout">
+        
+        <!-- ЛЕВАЯ КОЛОНКА: Боковое меню -->
+        <aside class="profile-sidebar">
+            <a href="{% url 'profile' %}" class="sidebar-btn active">Мои заказы</a>
+            <a href="{% url 'logout' %}" class="sidebar-btn">Выйти</a>
+        </aside>
+
+        <!-- ПРАВАЯ КОЛОНКА: Список заказов -->
+        <div class="profile-main">
+            
+            <!-- Табы (фильтры) -->
+            <div class="profile-tabs">
+                <button class="profile-tab active">Все заказы</button>
+                <button class="profile-tab">Активные</button>
+                <button class="profile-tab">Завершённые</button>
+            </div>
+
+            <!-- Список карточек заказов -->
+            <div class="profile-orders-list">
+                {% for order in orders %}
+                    <div class="profile-order-card">
+                        
+                        <div class="order-header">
+                            <span class="order-number">№{{ order.id }}</span>
+                            <span class="order-divider">/</span>
+                            <span class="order-date">{{ order.created_at|date:"d E Y" }}</span>
+                        </div>
+                        
+                        <div class="order-info">
+                            <!-- get_status_display переводит 'new' на русский 'Новый' из choices -->
+                            <span class="order-status">{{ order.get_status_display }}</span>
+                            <span class="order-price">{{ order.total_price|floatformat:0 }} ₽</span>
+                        </div>
+                        
+                        <a href="#" class="order-details-btn">Подробнее</a>
+                    </div>
+                {% empty %}
+                    <div class="empty-orders">
+                        <p>У вас пока нет заказов.</p>
+                        <a href="{% url 'catalog' %}" class="btn-primary" style="display: inline-flex; width: auto; margin-top: 16px;">
+                            Перейти в каталог
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

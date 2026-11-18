@@ -21,7 +21,12 @@
             <a class="div" href="{% url 'catalog' %}">Каталог</a>
             <a class="div" href="#blog">Блог</a>
             <a class="div" href="#about">О нас</a>
-            <a class="div" href="#profile">Профиль</a>
+            <!-- В base.html -->
+            {% if user.is_authenticated %}
+                <a class="div" href="{% url 'profile' %}">Профиль ({{ user.first_name }})</a>
+            {% else %}
+                <a class="div" href="{% url 'login' %}">Профиль</a>
+            {% endif %}
         </nav>
         <a class="text-wrapper-2" href="{% url 'cart_detail' %}" aria-label="Корзина">Корзина</a>
     </header>
