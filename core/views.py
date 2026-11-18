@@ -1,11 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Product, Category, Order, OrderItem
+from .models import Product, Category, Order, OrderItem, BlogPost
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+<<<<<<< HEAD
 import json
+=======
+from django.http import JsonResponse
+from django.db.models import Count, Sum
+from django.db.models.functions import TruncDate
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import login
+from .forms import RegisterForm
+>>>>>>> 57ae933e555b02c47b807d81eeba63759c1ab5bf
 
 def index(request):
     """Главная страница кофейни (без вывода товаров)"""
@@ -198,6 +207,7 @@ def receipt(request, order_id):
     return response
 
 
+
 @login_required # Заказ могут оформлять только авторизованные пользователи
 def checkout(request):
     """Страница оформления заказа"""
@@ -291,3 +301,52 @@ def download_receipt(request, order_id):
         
     response.seek(0)
     return FileResponse(response, as_attachment=True, filename=f'receipt_{order.id}.pdf')
+
+def blog_list(request):
+    """Страница со списком всех статей"""
+    posts = BlogPost.objects.all().order_by('-created_at')
+    return render(request, 'core/blog_list.html', {'posts': posts})
+
+
+def blog_detail(request, post_id):
+    """Страница одной статьи"""
+    post = get_object_or_404(BlogPost, id=post_id)
+    return render(request, 'core/blog_detail.html', {'post': post})
+
+@staff_member_required
+def stats_page(request):
+    return render(request, 'core/stats.html')
+
+@staff_member_required
+def stats_summary(request):
+    total_revenue = Order.objects.aggregate(Sum('total_price'))['total_price__sum'] or 0
+    total_orders = Order.objects.count()
+    return JsonResponse({'total_revenue': float(total_revenue), 'total_orders': total_orders})
+
+@staff_member_required
+def stats_popular_products(request):
+    data = (OrderItem.objects.values('product__name').annotate(count=Count('id')).order_by('-count')[:5])
+    return JsonResponse(list(data), safe=False)
+
+@staff_member_required
+def stats_orders_by_day(request):
+    data = (Order.objects.annotate(date=TruncDate('created_at')).values('date').annotate(count=Count('id')).order_by('date'))
+    result = [{'date': item['date'].strftime('%d.%m.%Y'), 'count': item['count']} for item in data]
+    return JsonResponse(result, safe=False)
+
+def register(request):
+    """Страница регистрации нового пользователя"""
+    if request.user.is_authenticated:
+        return redirect('catalog')
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f'Добро пожаловать, {user.username}!')
+            return redirect('catalog')
+    else:
+        form = RegisterForm()
+
+    return render(request, 'core/register.html', {'form': form})

@@ -1,0 +1,12 @@
+<h1>Наш блог</h1>
+<a href="{% url 'catalog' %}">Вернуться в каталог</a>
+<hr>
+{% for post in posts %}
+    <div style="margin-bottom: 20px;">
+        <h2><a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a></h2>
+        <p><small>{{ post.created_at|date:"d.m.Y" }}</small></p>
+        <p>{{ post.content|truncatewords:20 }}</p>
+    </div>
+{% empty %}
+    <p>Статей пока нет. Добавьте их через админку.</p>
+{% endfor %}
