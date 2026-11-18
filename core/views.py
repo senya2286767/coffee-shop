@@ -54,7 +54,6 @@ def cart_add(request, product_id):
     request.session['cart'] = cart
     messages.success(request, f'Товар «{product.name}» добавлен в корзину!')
     
-    # Возвращаем пользователя туда, откуда он пришел (в каталог или на главную)
     return redirect(request.META.get('HTTP_REFERER', 'catalog'))
 
 def cart_remove(request, product_id):
