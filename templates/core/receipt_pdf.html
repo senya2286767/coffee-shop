@@ -2,56 +2,148 @@
 <html>
 <head>
     <style>
-        body { font-family: Helvetica, Arial, sans-serif; font-size: 14px; color: #333; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { color: #8B4513; margin-bottom: 5px; }
-        .info { margin-bottom: 20px; }
-        .table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        .table th { background-color: #f8f9fa; }
-        .total { text-align: right; font-size: 18px; font-weight: bold; }
-        .footer { text-align: center; margin-top: 50px; font-size: 12px; color: #777; }
+        /* Базовые стили для PDF */
+        @page {
+            size: a4;
+            margin: 2cm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #2b2118; /* Темно-коричневый цвет бренда */
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        /* Заголовок и бренд */
+        .brand {
+            font-family: "Times New Roman", Times, serif; /* Замена Playfair Display */
+            font-size: 26px;
+            color: #2b2118;
+            margin-bottom: 8px;
+        }
+        
+        .company-info {
+            font-size: 10px;
+            color: #6f4e37; /* Кофейный цвет */
+            margin-bottom: 25px;
+        }
+        
+        /* Таблица для выравнивания (вместо Flexbox) */
+        .row {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .row td {
+            padding: 0;
+            vertical-align: top;
+        }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        
+        /* Метаданные (Номер и дата) */
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            font-size: 13px;
+        }
+        .meta-table td {
+            width: 50%;
+            padding: 0;
+        }
+        
+        /* Список товаров */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .items-table td {
+            padding: 6px 0;
+            border: none;
+            font-size: 13px;
+        }
+        
+        /* Линия-разделитель */
+        .divider {
+            border-top: 1px solid #2b2118;
+            margin: 15px 0 20px 0;
+        }
+        
+        /* Итоги */
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .totals-table td {
+            padding: 4px 0;
+            border: none;
+        }
+        .bold-text {
+            font-weight: bold;
+        }
+        
+        /* Подвал */
+        .footer {
+            font-size: 11px;
+            color: #6f4e37;
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>☕ Кофейня</h1>
-        <p>Ваш чек об оплате заказа</p>
+
+    <!-- Шапка -->
+    <div class="brand">Тёплое место</div>
+    <div class="company-info">
+        ООО «Тёплое место»<br>
+        ИНН 7700000000 · Москва, Лесная, 12<br>
+        Демонстрационный чек · не фискальный
     </div>
 
-    <div class="info">
-        <p><b>Чек №:</b> {{ order.id }}</p>
-        <p><b>Дата:</b> {{ order.created_at|date:"d.m.Y H:i" }}</p>
-        <p><b>Покупатель:</b> {{ order.user.username }}</p>
-    </div>
+    <!-- Номер заказа и дата -->
+    <table class="meta-table">
+        <tr>
+            <td class="text-left">№{{ order.id }}</td>
+            <td class="text-right">{{ order.created_at|date:"d.m.Y H:i" }}</td>
+        </tr>
+    </table>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Товар</th>
-                <th>Кол-во</th>
-                <th>Цена</th>
-                <th>Сумма</th>
-            </tr>
-        </thead>
+    <!-- Товары -->
+    <table class="items-table">
         <tbody>
             {% for item in order.items.all %}
             <tr>
-                <td>{{ item.product.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.price }} руб.</td>
-                <td>{{ item.price }} руб.</td>
+                <td class="text-left">{{ item.product.name }}</td>
+                <!-- Выводим количество и цену (Сумма рассчитывается как цена * кол-во, если у вас нет готового поля, лучше добавить его в модель) -->
+                <td class="text-right">{{ item.quantity }} × {{ item.price|floatformat:0 }} ₽</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <div class="total">
-        <p>Итого: {{ order.total_price }} руб.</p>
+    <!-- Разделитель -->
+    <div class="divider"></div>
+
+    <!-- Итоги -->
+    <table class="totals-table">
+        <tr>
+            <td class="text-left bold-text">ИТОГО</td>
+            <td class="text-right bold-text">{{ order.total_price|floatformat:0 }} ₽</td>
+        </tr>
+        <tr>
+            <td class="text-left">К оплате при получении</td>
+            <td class="text-right">{{ order.total_price|floatformat:0 }} ₽</td>
+        </tr>
+    </table>
+
+    <!-- Подвал -->
+    <div class="footer">
+        Спасибо, что провели утро с нами!
     </div>
 
-    <div class="footer">
-        <p>Спасибо за покупку! Ждем вас снова.</p>
-    </div>
 </body>
 </html>

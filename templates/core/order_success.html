@@ -34,12 +34,9 @@
 
         <!-- Кнопки -->
         <div class="success-actions">
-            <!-- Ссылка на генерацию PDF (тот самый xhtml2pdf) -->
+            <!-- Ведет на HTML-страницу чека -->
             <a href="{% url 'download_receipt' order.id %}" class="btn-primary success-btn">
                 Открыть чек
-            </a>
-            <a href="#" class="btn-secondary success-btn">
-                Следить за заказом
             </a>
             <a href="{% url 'catalog' %}" class="btn-secondary success-btn">
                 Вернуться в каталог
