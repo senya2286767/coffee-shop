@@ -9,6 +9,8 @@ from django.http import JsonResponse
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncDate
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import login
+from .forms import RegisterForm
 
 def index(request):
     """Главная страница кофейни (без вывода товаров)"""
@@ -161,3 +163,20 @@ def stats_orders_by_day(request):
     data = (Order.objects.annotate(date=TruncDate('created_at')).values('date').annotate(count=Count('id')).order_by('date'))
     result = [{'date': item['date'].strftime('%d.%m.%Y'), 'count': item['count']} for item in data]
     return JsonResponse(result, safe=False)
+
+def register(request):
+    """Страница регистрации нового пользователя"""
+    if request.user.is_authenticated:
+        return redirect('catalog')
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f'Добро пожаловать, {user.username}!')
+            return redirect('catalog')
+    else:
+        form = RegisterForm()
+
+    return render(request, 'core/register.html', {'form': form})
