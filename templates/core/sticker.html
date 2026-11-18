@@ -98,7 +98,6 @@
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         
-        // Проверяем лимит
         if (placedStickersCount >= MAX_STICKERS) {
             alert('Максимум 3 стикера на один стакан!');
             return;
@@ -106,29 +105,33 @@
 
         const stickerText = e.dataTransfer.getData('text/plain');
         
-        // Скрываем надпись "Тёплое место"
         if (placeholder) {
             placeholder.style.display = 'none';
         }
 
-        // Создаем новый стикер
         const newSticker = document.createElement('div');
         newSticker.className = 'dropped-sticker';
         newSticker.innerText = stickerText;
         
-        // Вычисляем позицию курсора мыши внутри стакана
-        const rect = dropZone.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        // Сначала добавляем на страницу, чтобы узнать его реальные размеры
+        dropZone.appendChild(newSticker);
         
-        // Ставим стикер туда, куда упала мышь
+        const rect = dropZone.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+        
+        // Узнаем ширину и высоту самого стикера
+        const stickerWidth = newSticker.offsetWidth;
+        const stickerHeight = newSticker.offsetHeight;
+        
+        // Ограничиваем координаты так, чтобы стикер всегда был ВНУТРИ белого блока
+        const padding = 10;
+        x = Math.max(stickerWidth / 2 + padding, Math.min(x, rect.width - stickerWidth / 2 - padding));
+        y = Math.max(stickerHeight / 2 + padding, Math.min(y, rect.height - stickerHeight / 2 - padding));
+        
         newSticker.style.left = `${x}px`;
         newSticker.style.top = `${y}px`;
         
-        // Добавляем на стакан
-        dropZone.appendChild(newSticker);
-        
-        // Обновляем счетчик
         placedStickersCount++;
         countDisplay.innerText = placedStickersCount;
     });

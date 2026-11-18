@@ -929,17 +929,19 @@ body {
 }
 
 
-/* --- СТИЛИ ДЛЯ СТРАНИЦЫ СТИКЕРОВ --- */
+/* --- СТИЛИ ДЛЯ СТРАНИЦЫ СТИКЕРОВ (FLEXBOX) --- */
 .sticker-layout {
-    display: grid;
-    grid-template-columns: 300px 1fr 300px;
+    display: flex !important;
+    flex-direction: row !important;
     gap: 24px;
-    width: 100%;
+    width: 100% !important;
     align-items: stretch;
 }
 
-/* Левая колонка (Палитра) */
-.sticker-palette {
+/* Левая и правая колонки (фиксированные) */
+.sticker-palette, 
+.sticker-summary {
+    flex: 0 0 320px !important; /* Ширина ровно 320px, сжиматься запрещено */
     background-color: var(--tokens-color-white);
     padding: 24px;
     border-radius: var(--tokens-space-radius);
@@ -948,55 +950,13 @@ body {
     flex-direction: column;
 }
 
-.sticker-tabs {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 24px;
-}
-
-.sticker-tabs .tab-btn {
-    background: none;
-    border: none;
-    font-family: var(--body-font-family);
-    font-size: 14px;
-    color: var(--tokens-color-coffee);
-    cursor: pointer;
-    padding: 0;
-}
-
-.sticker-tabs .tab-btn.active {
-    color: var(--tokens-color-ink);
-    font-weight: 500;
-}
-
-.sticker-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-/* Сам стикер в палитре */
-.sticker-item {
-    background-color: var(--tokens-color-cream);
-    padding: 16px;
-    border-radius: var(--tokens-space-controlradius);
-    text-align: center;
-    font-family: var(--body-font-family);
-    font-size: 14px;
-    color: var(--tokens-color-coffee);
-    cursor: grab; /* Курсор-рука */
-    user-select: none;
-}
-
-.sticker-item:active {
-    cursor: grabbing;
-}
-
-/* Центральная колонка (Коричневый фон) */
+/* Центральная колонка (растягивается) */
 .sticker-canvas-wrapper {
+    flex: 1 1 auto !important; /* Занимает всё оставшееся место */
+    min-width: 0 !important; /* Запрещает сжиматься меньше контента */
     background-color: var(--tokens-color-coffee);
     border-radius: var(--tokens-space-radius);
-    padding: 24px;
+    padding: 32px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1006,58 +966,56 @@ body {
 /* Белый стакан (зона дропа) */
 .sticker-drop-zone {
     width: 100%;
-    max-width: 400px;
-    height: 400px;
+    max-width: 500px;
+    height: 450px;
     background-color: var(--tokens-color-cream);
     border-radius: var(--tokens-space-radius);
-    position: relative; /* Важно для абсолютного позиционирования стикеров */
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
-    overflow: hidden; /* Чтобы стикеры не вылетали за края */
+    overflow: hidden;
+    margin: 24px 0;
 }
 
-/* Заглушка "Тёплое место" */
+/* Текст "Тёплое место" */
 .sticker-placeholder {
     font-family: var(--display-font-family);
     font-size: 48px;
     color: var(--tokens-color-coffee);
-    text-align: center;
+    text-align: left;
     line-height: 1.1;
-    pointer-events: none; /* Чтобы текст не мешал кликать */
+    pointer-events: none;
+    padding-left: 32px;
+    width: 100%;
 }
 
-/* Стикер, который уже упал на стакан */
+/* Упавший стикер */
 .dropped-sticker {
     position: absolute;
-    background-color: var(--tokens-color-white);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-family: var(--body-font-family);
-    font-size: 12px;
-    color: var(--tokens-color-coffee);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transform: translate(-50%, -50%); /* Центрируем по курсору */
-    pointer-events: none; /* Чтобы стикер нельзя было случайно перетащить */
+    background-color: #C47A4A !important;
+    color: var(--tokens-color-white) !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    font-family: var(--body-font-family) !important;
+    font-size: 16px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    transform: translate(-50%, -50%) !important; /* Центрируем относительно курсора */
+    pointer-events: none;
     white-space: nowrap;
+    text-align: center;
+    border: none !important;
+    z-index: 10;
 }
 
-/* Правая колонка (Итог) */
-.sticker-summary {
-    background-color: var(--tokens-color-white);
-    padding: 24px;
-    border-radius: var(--tokens-space-radius);
-    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
-    display: flex;
-    flex-direction: column;
-}
+/* Остальные стили (табы, список, правая колонка) */
+.sticker-tabs { display: flex; gap: 12px; margin-bottom: 24px; }
+.sticker-tabs .tab-btn { background: none; border: none; font-family: var(--body-font-family); font-size: 14px; color: var(--tokens-color-coffee); cursor: pointer; padding: 0; }
+.sticker-tabs .tab-btn.active { color: var(--tokens-color-ink); font-weight: 500; }
+.sticker-list { display: flex; flex-direction: column; gap: 12px; }
+.sticker-item { background-color: var(--tokens-color-cream); padding: 16px; border-radius: var(--tokens-space-controlradius); text-align: center; font-family: var(--body-font-family); font-size: 14px; color: var(--tokens-color-coffee); cursor: grab; user-select: none; }
+.sticker-item:active { cursor: grabbing; }
+.summary-details { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
 
-.summary-details {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 24px;
-}
 
 /* Адаптив для мобильных */
 @media (max-width: 1024px) {
