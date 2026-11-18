@@ -17,7 +17,7 @@
         
         <!-- ЛЕВАЯ КОЛОНКА: Палитра стикеров -->
         <aside class="sticker-palette">
-            <h3 class="filter-title" style="margin-bottom: 16px;">Стикеры</h3>
+            <h3 class="filter-title">Стикеры</h3>
             
             <div class="sticker-tabs">
                 <button class="tab-btn active">Все</button>
@@ -36,7 +36,7 @@
         <!-- ЦЕНТРАЛЬНАЯ КОЛОНКА: Стакан (Зона для дропа) -->
         <div class="sticker-canvas-wrapper">
             <div class="sticker-canvas-container">
-                <p class="text-wrapper" style="color: var(--tokens-color-cream); margin-bottom: 16px;">ВАШ ЛАТТЕ</p>
+                <p class="canvas-label">ВАШ ЛАТТЕ</p>
                 
                 <!-- Сам стакан (сюда падают стикеры) -->
                 <div class="sticker-drop-zone" id="drop-zone">
@@ -44,27 +44,28 @@
                         Тёплое<br>место
                     </div>
                 </div>
+                <p class="canvas-label bottom-label">Потяните стикер сюда</p>
             </div>
-            <p class="text-wrapper" style="color: var(--tokens-color-cream); margin-top: 16px;">Потяните стикер сюда</p>
         </div>
 
         <!-- ПРАВАЯ КОЛОНКА: Итог -->
         <aside class="sticker-summary">
-            <h3 class="text-wrapper-10" style="font-size: 24px; margin-bottom: 16px;">Латте · 300 мл</h3>
+            <h3 class="summary-title">Латте · 300 мл</h3>
             
             <div class="summary-details">
-                <p class="text-wrapper-2">Стакан / кремовый</p>
-                <p class="text-wrapper-2">Стикеры / <span id="sticker-count">0</span> до 3 штук</p>
-                <p class="text-wrapper-2" style="font-weight: 500;">Цена / 320 ₽</p>
+                <p class="detail-text">Стакан / кремовый</p>
+                <p class="detail-text">Стикеры / <span id="sticker-count">0</span> до 3 штук</p>
+                <p class="detail-text price">Цена / 320 ₽</p>
             </div>
 
-            <button class="btn-primary" style="margin-top: 24px;" onclick="addToCartWithStickers()">
-                Готово, в корзину
-            </button>
-            
-            <button class="btn-secondary" style="margin-top: 12px;" onclick="resetStickers()">
-                Начать заново
-            </button>
+            <div class="summary-actions">
+                <button class="btn-primary" onclick="addToCartWithStickers()">
+                    Готово, в корзину
+                </button>
+                <button class="btn-secondary" onclick="resetStickers()">
+                    Начать заново
+                </button>
+            </div>
         </aside>
 
     </div>
@@ -80,7 +81,6 @@
     let placedStickersCount = 0;
     const MAX_STICKERS = 3;
 
-    // 1. Начинаем перетаскивание
     stickers.forEach(sticker => {
         sticker.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', sticker.innerText);
@@ -88,13 +88,11 @@
         });
     });
 
-    // 2. Разрешаем дроп (без этого не работает)
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault(); 
         e.dataTransfer.dropEffect = 'copy';
     });
 
-    // 3. Обрабатываем дроп
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         
@@ -113,18 +111,15 @@
         newSticker.className = 'dropped-sticker';
         newSticker.innerText = stickerText;
         
-        // Сначала добавляем на страницу, чтобы узнать его реальные размеры
         dropZone.appendChild(newSticker);
         
         const rect = dropZone.getBoundingClientRect();
         let x = e.clientX - rect.left;
         let y = e.clientY - rect.top;
         
-        // Узнаем ширину и высоту самого стикера
         const stickerWidth = newSticker.offsetWidth;
         const stickerHeight = newSticker.offsetHeight;
         
-        // Ограничиваем координаты так, чтобы стикер всегда был ВНУТРИ белого блока
         const padding = 10;
         x = Math.max(stickerWidth / 2 + padding, Math.min(x, rect.width - stickerWidth / 2 - padding));
         y = Math.max(stickerHeight / 2 + padding, Math.min(y, rect.height - stickerHeight / 2 - padding));
@@ -136,7 +131,6 @@
         countDisplay.innerText = placedStickersCount;
     });
 
-    // 4. Сброс
     function resetStickers() {
         const dropped = document.querySelectorAll('.dropped-sticker');
         dropped.forEach(el => el.remove());
@@ -147,10 +141,8 @@
         }
     }
 
-    // 5. Заглушка для корзины
     function addToCartWithStickers() {
         alert(`Латте со стикерами добавлен в корзину! Выбрано стикеров: ${placedStickersCount}`);
-        // Позже напарник заменит это на отправку запроса в Django
     }
 </script>
 {% endblock %}

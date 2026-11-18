@@ -1,0 +1,116 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="checkout-page">
+    <!-- Хлебные крошки -->
+    <p class="breadcrumbs">Главная / Оформление заказа</p>
+
+    <!-- Заголовок -->
+    <h1 class="page-title">Оформление заказа</h1>
+    
+    <!-- Шаги -->
+    <div class="checkout-steps">
+        <span class="active">1. Контакты</span>
+        <span class="arrow">→</span>
+        <span>2. Получение</span>
+        <span class="arrow">→</span>
+        <span>3. Оплата</span>
+    </div>
+
+    <!-- Основная сетка (2 колонки) -->
+    <form method="POST" action="{% url 'checkout' %}" class="checkout-layout">
+        {% csrf_token %}
+        
+        <!-- ЛЕВАЯ КОЛОНКА: Форма -->
+        <div class="checkout-form-container">
+            
+            <!-- Блок 1: Контакты -->
+            <h2 class="form-section-title">Контактные данные</h2>
+            
+            <div class="input-group">
+                <label>Имя</label>
+                <input type="text" name="name" placeholder="Анна" required value="{{ request.user.first_name|default:'' }}">
+            </div>
+            
+            <div class="input-group">
+                <label>Телефон</label>
+                <input type="tel" name="phone" placeholder="+7 999 120-08-08" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Электронная почта</label>
+                <input type="email" name="email" placeholder="anna@example.ru" required value="{{ request.user.email|default:'' }}">
+            </div>
+
+            <!-- Блок 2: Получение -->
+            <h2 class="form-section-title" style="margin-top: 32px;">Получение</h2>
+            
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="delivery" value="pickup" checked>
+                    <span class="custom-radio"></span>
+                    Самовывоз
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="delivery" value="delivery">
+                    <span class="custom-radio"></span>
+                    Доставка
+                </label>
+            </div>
+            
+            <div class="input-group readonly-group">
+                <label>Кофейня</label>
+                <input type="text" value="Лесная, 12 · сегодня через 15 минут" readonly>
+            </div>
+
+            <!-- Блок 3: Оплата -->
+            <h2 class="form-section-title" style="margin-top: 32px;">Оплата</h2>
+            
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="payment" value="card" checked>
+                    <span class="custom-radio"></span>
+                    Картой при получении
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="payment" value="online">
+                    <span class="custom-radio"></span>
+                    Онлайн
+                </label>
+            </div>
+        </div>
+
+        <!-- ПРАВАЯ КОЛОНКА: Итог -->
+        <aside class="checkout-summary">
+            <h3 class="cart-summary-title">Ваш заказ</h3>
+            
+            <div class="cart-summary-row">
+                <span>Товары · <span id="total-qty">{{ total_quantity }}</span> шт.</span>
+                <span>{{ total_price|floatformat:0 }} ₽</span>
+            </div>
+            
+            <div class="cart-summary-row">
+                <span>Самовывоз</span>
+                <span>Бесплатно</span>
+            </div>
+            
+            <hr class="cart-summary-divider">
+            
+            <div class="cart-summary-total">
+                <span>Итого</span>
+                <span>{{ total_price|floatformat:0 }} ₽</span>
+            </div>
+            
+            <button type="submit" class="btn-primary cart-checkout-btn">
+                Подтвердить заказ
+            </button>
+            
+            <p class="cart-summary-note">
+                Приготовим после подтверждения.<br>
+                Оплата при получении.
+            </p>
+        </aside>
+    </form>
+</div>
+{% endblock %}

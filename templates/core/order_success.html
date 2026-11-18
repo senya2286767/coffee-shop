@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="success-page">
+    <!-- Хлебные крошки -->
+    <p class="breadcrumbs">Главная / Ваш заказ принят</p>
+
+    <!-- Заголовок -->
+    <h1 class="page-title">Ваш заказ принят</h1>
+    
+    <!-- Подзаголовок с номером и датой -->
+    <p class="success-subtitle">
+        Заказ №{{ order.id }} · {{ order.created_at|date:"d E Y, H:i" }}
+    </p>
+
+    <!-- Белая карточка -->
+    <div class="success-card">
+        
+        <!-- Зеленая галочка (SVG) -->
+        <div class="success-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 12L10 18L20 6" stroke="#2E7D32" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <h2 class="success-card-title">Уже готовим ваш кофе</h2>
+        
+        <div class="success-info">
+            <p>Заберите заказ в <strong>{{ pickup_time|time:"H:i" }}</strong></p>
+            <p>Москва, ул. Лесная, 12</p>
+            <p>Назовите бариста номер <strong>{{ order.id }}</strong>.</p>
+        </div>
+
+        <!-- Кнопки -->
+        <div class="success-actions">
+            <!-- Ссылка на генерацию PDF (тот самый xhtml2pdf) -->
+            <a href="{% url 'download_receipt' order.id %}" class="btn-primary success-btn">
+                Открыть чек
+            </a>
+            <a href="#" class="btn-secondary success-btn">
+                Следить за заказом
+            </a>
+            <a href="{% url 'catalog' %}" class="btn-secondary success-btn">
+                Вернуться в каталог
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

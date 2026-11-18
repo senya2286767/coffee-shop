@@ -931,17 +931,17 @@ body {
 
 /* --- СТИЛИ ДЛЯ СТРАНИЦЫ СТИКЕРОВ (FLEXBOX) --- */
 .sticker-layout {
-    display: flex !important;
-    flex-direction: row !important;
+    display: flex;
+    flex-direction: row;
     gap: 24px;
-    width: 100% !important;
+    width: 100%;
     align-items: stretch;
 }
 
 /* Левая и правая колонки (фиксированные) */
 .sticker-palette, 
 .sticker-summary {
-    flex: 0 0 320px !important; /* Ширина ровно 320px, сжиматься запрещено */
+    flex: 0 0 320px; /* Ширина ровно 320px */
     background-color: var(--tokens-color-white);
     padding: 24px;
     border-radius: var(--tokens-space-radius);
@@ -952,77 +952,732 @@ body {
 
 /* Центральная колонка (растягивается) */
 .sticker-canvas-wrapper {
-    flex: 1 1 auto !important; /* Занимает всё оставшееся место */
-    min-width: 0 !important; /* Запрещает сжиматься меньше контента */
+    flex: 1 1 auto;
+    min-width: 0;
     background-color: var(--tokens-color-coffee);
     border-radius: var(--tokens-space-radius);
     padding: 32px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.sticker-canvas-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 520px; /* Ограничиваем ширину стакана */
+}
+
+.canvas-label {
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-cream);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    align-self: flex-start;
+}
+
+.canvas-label.bottom-label {
+    margin-top: 24px;
+    margin-bottom: 0;
 }
 
 /* Белый стакан (зона дропа) */
 .sticker-drop-zone {
     width: 100%;
-    max-width: 500px;
-    height: 450px;
+    height: 480px; /* Увеличили высоту */
     background-color: var(--tokens-color-cream);
     border-radius: var(--tokens-space-radius);
     position: relative;
     display: flex;
     align-items: center;
     overflow: hidden;
-    margin: 24px 0;
 }
 
 /* Текст "Тёплое место" */
 .sticker-placeholder {
     font-family: var(--display-font-family);
-    font-size: 48px;
+    font-size: 56px; /* Увеличили шрифт */
     color: var(--tokens-color-coffee);
     text-align: left;
     line-height: 1.1;
     pointer-events: none;
-    padding-left: 32px;
+    padding-left: 40px; /* Сделали красивый отступ */
     width: 100%;
 }
 
 /* Упавший стикер */
 .dropped-sticker {
     position: absolute;
-    background-color: #C47A4A !important;
-    color: var(--tokens-color-white) !important;
-    padding: 12px 24px !important;
-    border-radius: 8px !important;
-    font-family: var(--body-font-family) !important;
-    font-size: 16px !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-    transform: translate(-50%, -50%) !important; /* Центрируем относительно курсора */
+    background-color: var(--tokens-color-accent);
+    color: var(--tokens-color-white);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translate(-50%, -50%);
     pointer-events: none;
     white-space: nowrap;
     text-align: center;
-    border: none !important;
     z-index: 10;
 }
 
-/* Остальные стили (табы, список, правая колонка) */
+/* Детали левой колонки */
 .sticker-tabs { display: flex; gap: 12px; margin-bottom: 24px; }
-.sticker-tabs .tab-btn { background: none; border: none; font-family: var(--body-font-family); font-size: 14px; color: var(--tokens-color-coffee); cursor: pointer; padding: 0; }
+.sticker-tabs .tab-btn { 
+    background: none; border: none; font-family: var(--body-font-family); 
+    font-size: 14px; color: var(--tokens-color-coffee); cursor: pointer; padding: 0; 
+}
 .sticker-tabs .tab-btn.active { color: var(--tokens-color-ink); font-weight: 500; }
 .sticker-list { display: flex; flex-direction: column; gap: 12px; }
-.sticker-item { background-color: var(--tokens-color-cream); padding: 16px; border-radius: var(--tokens-space-controlradius); text-align: center; font-family: var(--body-font-family); font-size: 14px; color: var(--tokens-color-coffee); cursor: grab; user-select: none; }
+.sticker-item { 
+    background-color: var(--tokens-color-cream); 
+    padding: 16px; 
+    border-radius: var(--tokens-space-controlradius); 
+    text-align: center; 
+    font-family: var(--body-font-family); 
+    font-size: 14px; 
+    color: var(--tokens-color-coffee); 
+    cursor: grab; 
+    user-select: none; 
+}
 .sticker-item:active { cursor: grabbing; }
-.summary-details { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+
+/* Детали правой колонки */
+.summary-title {
+    font-family: var(--display-font-family);
+    font-size: 24px;
+    color: var(--tokens-color-ink);
+    margin-bottom: 24px;
+}
+.summary-details { display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; }
+.detail-text { font-family: var(--body-font-family); font-size: 16px; color: var(--tokens-color-coffee); margin: 0; }
+.detail-text.price { font-weight: 500; color: var(--tokens-color-ink); margin-top: 8px; }
+.summary-actions { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
+
+/* Переопределяем ширину кнопок для правой колонки */
+.sticker-summary .btn-primary,
+.sticker-summary .btn-secondary {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 0; /* Убираем отступ снизу у первой кнопки */
+}
 
 
-/* Адаптив для мобильных */
-@media (max-width: 1024px) {
+/* --- АДАПТИВНОСТЬ ДЛЯ СТИКЕРОВ --- */
+
+/* Планшеты */
+@media (max-width: 1100px) {
     .sticker-layout {
-        grid-template-columns: 1fr;
+        flex-wrap: wrap; 
     }
     .sticker-canvas-wrapper {
-        min-height: 500px;
+        flex: 1 1 100%;
+        order: -1; /* Стакан ставим наверх */
+        margin-bottom: 24px;
+    }
+    .sticker-palette { 
+        flex: 1 1 calc(50% - 12px); 
+    }
+    .sticker-summary { 
+        flex: 1 1 calc(50% - 12px); 
+    }
+}
+
+/* Мобилки */
+@media (max-width: 768px) {
+    .sticker-layout { 
+        flex-direction: column; 
+    }
+    .sticker-palette, 
+    .sticker-summary { 
+        flex: 1 1 100%; 
+        width: 100%; 
+    }
+    .sticker-canvas-wrapper {
+        padding: 20px;
+    }
+    .sticker-drop-zone {
+        height: 350px; /* Уменьшаем стакан на телефонах */
+    }
+    .sticker-placeholder {
+        font-size: 40px;
+        padding-left: 20px;
+    }
+    .dropped-sticker {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
+/* --- СТИЛИ ДЛЯ СТРАНИЦЫ КОРЗИНЫ --- */
+.cart-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.cart-page .breadcrumbs {
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    margin-bottom: 24px;
+}
+
+.cart-page .page-title {
+    font-family: var(--display-font-family);
+    font-size: 48px;
+    color: var(--tokens-color-ink);
+    margin: 0 0 12px 0;
+    line-height: 1.1;
+}
+
+.cart-page .page-subtitle {
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    color: var(--tokens-color-coffee);
+    margin: 0 0 40px 0;
+}
+
+/* Сетка в 2 колонки */
+.cart-layout {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 32px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+/* Левая колонка */
+.cart-items {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+/* Карточка товара */
+.cart-item-card {
+    background-color: var(--tokens-color-white);
+    border-radius: var(--tokens-space-radius);
+    padding: 32px;
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cart-item-title {
+    font-family: var(--display-font-family);
+    font-size: 24px;
+    color: var(--tokens-color-ink);
+    margin: 0 0 12px 0;
+}
+
+.cart-item-details {
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    margin: 0 0 24px 0;
+}
+
+.cart-item-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+/* Кнопки + и - */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.qty-btn {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    font-size: 20px;
+    color: var(--tokens-color-coffee);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.qty-number {
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    color: var(--tokens-color-ink);
+    width: 20px;
+    text-align: center;
+}
+
+.cart-item-price {
+    font-family: var(--body-font-family);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--tokens-color-ink);
+}
+
+.cart-item-remove {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    text-align: left;
+    cursor: pointer;
+    text-decoration: underline;
+    align-self: flex-start;
+    opacity: 0.7;
+}
+
+.cart-item-remove:hover {
+    opacity: 1;
+}
+
+/* Правая колонка (Чек) */
+.cart-summary {
+    flex: 0 0 380px;
+    background-color: var(--tokens-color-white);
+    border-radius: var(--tokens-space-radius);
+    padding: 32px;
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+    position: sticky;
+    top: 24px;
+}
+
+.cart-summary-title {
+    font-family: var(--display-font-family);
+    font-size: 28px;
+    color: var(--tokens-color-ink);
+    margin: 0 0 24px 0;
+}
+
+.cart-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    color: var(--tokens-color-ink);
+    margin-bottom: 16px;
+}
+
+.cart-summary-divider {
+    border: none;
+    border-top: 1px solid var(--tokens-color-cream);
+    margin: 24px 0;
+}
+
+.cart-summary-total {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--body-font-family);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--tokens-color-ink);
+    margin-bottom: 32px;
+}
+
+.cart-checkout-btn {
+    max-width: 100% !important;
+    width: 100%;
+    margin-bottom: 16px !important;
+}
+
+.cart-summary-note {
+    font-family: var(--body-font-family);
+    font-size: 12px;
+    color: var(--tokens-color-coffee);
+    line-height: 1.5;
+    margin: 0;
+    opacity: 0.8;
+}
+
+/* Адаптив: на планшетах и телефонах ставим друг под друга */
+@media (max-width: 1024px) {
+    .cart-layout {
+        flex-direction: column !important;
+    }
+    .cart-summary {
+        flex: 1 1 100%;
+        width: 100%;
+        position: static;
+    }
+}
+
+@media (max-width: 600px) {
+    .cart-page .page-title {
+        font-size: 36px;
+    }
+    .cart-item-card {
+        padding: 20px;
+    }
+    .cart-item-title {
+        font-size: 20px;
+    }
+    .cart-item-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+}
+
+/* --- СТИЛИ ДЛЯ ОФОРМЛЕНИЯ ЗАКАЗА --- */
+.checkout-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.checkout-steps {
+    display: flex;
+    gap: 16px;
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    margin-bottom: 40px;
+    align-items: center;
+}
+
+.checkout-steps .active {
+    color: var(--tokens-color-ink);
+    font-weight: 500;
+}
+
+.checkout-steps .arrow {
+    color: var(--tokens-color-coffee);
+    opacity: 0.5;
+}
+
+/* Сетка */
+.checkout-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+/* Левая колонка с формой */
+.checkout-form-container {
+    flex: 1;
+    background-color: var(--tokens-color-white);
+    border-radius: var(--tokens-space-radius);
+    padding: 40px;
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+    min-width: 0;
+}
+
+.form-section-title {
+    font-family: var(--display-font-family);
+    font-size: 28px;
+    color: var(--tokens-color-ink);
+    margin: 0 0 24px 0;
+}
+
+/* Инпуты */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--tokens-color-white);
+    border: 1px solid var(--tokens-color-cream); /* Тонкая рамка */
+    border-radius: var(--tokens-space-controlradius);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+}
+
+.input-group:focus-within {
+    border-color: var(--tokens-color-coffee);
+}
+
+.input-group label {
+    font-family: var(--body-font-family);
+    font-size: 12px;
+    color: var(--tokens-color-coffee);
+    margin-bottom: 4px;
+}
+
+.input-group input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    color: var(--tokens-color-ink);
+    width: 100%;
+}
+
+.input-group input::placeholder {
+    color: var(--tokens-color-coffee);
+    opacity: 0.4;
+}
+
+.readonly-group {
+    background-color: #faf9f7;
+    border-color: #f0ece6;
+}
+.readonly-group input {
+    color: var(--tokens-color-coffee);
+}
+
+/* Радиокнопки */
+.radio-group {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    color: var(--tokens-color-ink);
+    cursor: pointer;
+    position: relative;
+}
+
+/* Скрываем стандартную радиокнопку */
+.radio-label input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--tokens-color-coffee);
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+/* Кастомная точка внутри */
+.radio-label input[type="radio"]:checked::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: var(--tokens-color-ink);
+    border-radius: 50%;
+}
+
+/* Правая колонка (Итог) */
+.checkout-summary {
+    flex: 0 0 380px;
+    background-color: var(--tokens-color-white);
+    border-radius: var(--tokens-space-radius);
+    padding: 32px;
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+    position: sticky;
+    top: 24px;
+}
+
+/* Адаптив */
+@media (max-width: 1024px) {
+    .checkout-layout {
+        flex-direction: column;
+    }
+    .checkout-summary {
+        flex: 1 1 100%;
+        width: 100%;
+        position: static;
+    }
+    .checkout-form-container {
+        padding: 24px;
+    }
+}
+
+/* --- ИСПРАВЛЕНИЕ ШАПКИ ДЛЯ ОФОРМЛЕНИЯ ЗАКАЗА --- */
+.checkout-page .breadcrumbs {
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    margin-bottom: 24px;
+}
+
+.checkout-page .page-title {
+    font-family: var(--display-font-family);
+    font-size: 48px;
+    color: var(--tokens-color-ink);
+    margin: 0 0 24px 0;
+    line-height: 1.1;
+}
+
+.checkout-steps {
+    display: flex;
+    flex-direction: row; /* Выстраиваем шаги в линию */
+    gap: 16px;
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    margin-bottom: 40px;
+    align-items: center;
+}
+
+.checkout-steps .active {
+    color: var(--tokens-color-ink);
+    font-weight: 500;
+}
+
+.checkout-steps .arrow {
+    color: var(--tokens-color-coffee);
+    opacity: 0.5;
+}
+
+
+/* --- СТИЛИ ДЛЯ СТРАНИЦЫ УСПЕШНОГО ЗАКАЗА --- */
+.success-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.success-page .breadcrumbs {
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    margin-bottom: 24px;
+}
+
+.success-page .page-title {
+    font-family: var(--display-font-family);
+    font-size: 48px;
+    color: var(--tokens-color-ink);
+    margin: 0 0 12px 0;
+    line-height: 1.1;
+}
+
+.success-subtitle {
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    color: var(--tokens-color-coffee);
+    margin: 0 0 40px 0;
+}
+
+/* Белая карточка */
+.success-card {
+    background-color: var(--tokens-color-white);
+    border-radius: var(--tokens-space-radius);
+    padding: 48px;
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 900px; /* Ограничиваем ширину, как на макете */
+}
+
+/* Иконка галочки */
+.success-icon {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.success-card-title {
+    font-family: var(--display-font-family);
+    font-size: 36px;
+    color: var(--tokens-color-ink);
+    margin: 0 0 24px 0;
+    line-height: 1.2;
+}
+
+/* Блок с информацией */
+.success-info {
+    font-family: var(--body-font-family);
+    font-size: 18px;
+    color: var(--tokens-color-ink);
+    line-height: 1.6;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Кнопки */
+.success-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.success-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    border-radius: var(--tokens-space-controlradius);
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    max-width: none !important; /* Перебиваем ограничение ширины из других стилей */
+    margin-bottom: 0 !important;
+}
+
+/* Переопределяем цвета для кнопок на этой странице */
+.success-actions .btn-primary {
+    background-color: var(--tokens-color-coffee);
+    color: var(--tokens-color-white);
+    border: none;
+}
+.success-actions .btn-primary:hover {
+    background-color: var(--tokens-color-ink);
+}
+
+.success-actions .btn-secondary {
+    background-color: #FAF8F5; /* Очень светлый фон */
+    color: var(--tokens-color-ink);
+    border: 1px solid transparent;
+}
+.success-actions .btn-secondary:hover {
+    background-color: var(--tokens-color-cream);
+}
+
+/* Адаптив для мобилок */
+@media (max-width: 768px) {
+    .success-page .page-title {
+        font-size: 36px;
+    }
+    .success-card {
+        padding: 24px;
+    }
+    .success-card-title {
+        font-size: 28px;
+    }
+    .success-info {
+        font-size: 16px;
+    }
+    .success-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    .success-btn {
+        width: 100%;
     }
 }

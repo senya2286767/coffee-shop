@@ -2,47 +2,129 @@
 {% load static %}
 
 {% block content %}
-<div class="view" style="min-height: 60vh;">
-    <h1 class="text-wrapper-4" style="margin-bottom: 30px;">Корзина</h1>
+<div class="cart-page">
+    <p class="breadcrumbs">Главная / Корзина</p>
+    <h1 class="page-title">Корзина</h1>
+    <p class="page-subtitle">Пара маленьких радостей — уже почти ваши.</p>
 
     {% if cart_items %}
-        <div style="width: 100%; max-width: 800px; background: var(--tokens-color-white); padding: 30px; border-radius: var(--tokens-space-radius); box-shadow: 0px 4px 16px rgba(43, 33, 24, 0.05);">
+        <div class="cart-layout">
             
-            {% for item in cart_items %}
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--tokens-color-cream); padding: 15px 0;">
-                    <div>
-                        <div class="text-wrapper-12" style="font-size: 20px;">{{ item.product.name }}</div>
-                        <p class="text-wrapper-8">{{ item.quantity }} шт.</p>
+            <!-- ЛЕВАЯ КОЛОНКА: Список товаров -->
+            <div class="cart-items">
+                {% for item in cart_items %}
+                    <!-- Карточка товара -->
+                    <div class="cart-item-card" id="item-card-{{ item.product.id }}">
+                        <h3 class="cart-item-title">{{ item.product.name }}</h3>
+                        <p class="cart-item-details">
+                            {{ item.product.composition|default:"300 мл · классическое молоко · без стикера" }}
+                        </p>
+                        
+                        <div class="cart-item-bottom">
+                            <div class="quantity-control">
+                                <button type="button" class="qty-btn" onclick="updateQuantity('{{ item.product.id }}', 'decrease')">−</button>
+                                <span class="qty-number" id="qty-{{ item.product.id }}">{{ item.quantity }}</span>
+                                <button type="button" class="qty-btn" onclick="updateQuantity('{{ item.product.id }}', 'increase')">+</button>
+                            </div>
+                            
+                            <!-- Убираем десятичные нули с помощью floatformat:0 -->
+                            <div class="cart-item-price" id="price-{{ item.product.id }}">{{ item.total|floatformat:0 }} ₽</div>
+                        </div>
+                        
+                        <button class="cart-item-remove" onclick="removeItem('{{ item.product.id }}')">Удалить</button>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 20px;">
-                        <span class="text-wrapper-5">{{ item.total }} ₽</span>
-                        <!-- Кнопка удаления -->
-                        <a href="{% url 'cart_remove' item.product.id %}" style="color: var(--tokens-color-error); font-family: var(--body-font-family); text-decoration: underline;">Удалить</a>
-                    </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
-                <h3 class="text-wrapper-12">Итого:</h3>
-                <h3 class="text-wrapper-12" style="font-size: 28px;">{{ total_price }} ₽</h3>
-            </div>
-            
-            <!-- Кнопка оформления заказа (пока ведет в никуда) -->
-            <a href="{% url 'checkout' %}" class="div-wrapper" style="margin-top: 20px; width: 100%; justify-content: center;">
-                <div class="text-wrapper-7">Оформить заказ</div>
-            </a>
-            
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="{% url 'catalog' %}" style="color: var(--tokens-color-coffee); text-decoration: underline;">← Вернуться в каталог</a>
-            </div>
+            <!-- ПРАВАЯ КОЛОНКА: Итоговый чек -->
+            <aside class="cart-summary">
+                <h3 class="cart-summary-title">Ваш заказ</h3>
+                
+                <div class="cart-summary-row">
+                    <!-- Выводим правильное общее количество -->
+                    <span>Товары · <span id="total-qty">{{ total_quantity|default:"0" }}</span> шт.</span>
+                    <span id="subtotal-price">{{ total_price|floatformat:0 }} ₽</span>
+                </div>
+                
+                <div class="cart-summary-row">
+                    <span>Самовывоз</span>
+                    <span>Бесплатно</span>
+                </div>
+                
+                <hr class="cart-summary-divider">
+                
+                <div class="cart-summary-total">
+                    <span>Итого</span>
+                    <span id="grand-total">{{ total_price|floatformat:0 }} ₽</span>
+                </div>
+                
+                <a href="{% url 'checkout' %}" class="btn-primary cart-checkout-btn">
+                    Перейти к оформлению
+                </a>
+                
+                <p class="cart-summary-note">
+                    Приготовим после подтверждения.<br>
+                    Оплата при получении.
+                </p>
+            </aside>
+
         </div>
     {% else %}
-        <div style="text-align: center; padding: 50px;">
-            <p class="text-wrapper-5">Ваша корзина пока пуста.</p>
-            <a href="{% url 'catalog' %}" class="div-wrapper" style="margin-top: 20px; display: inline-flex;">
-                <div class="text-wrapper-7">Перейти в каталог</div>
+        <div class="cart-empty">
+            <p class="text-wrapper-2" style="font-size: 18px;">Ваша корзина пока пуста.</p>
+            <a href="{% url 'catalog' %}" class="btn-primary" style="display: inline-flex; max-width: 250px; margin-top: 20px;">
+                Перейти в каталог
             </a>
         </div>
     {% endif %}
 </div>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function updateQuantity(itemId, action) {
+        fetch(`/cart/update/${itemId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Округляем цены при выводе в JS
+                document.getElementById(`qty-${itemId}`).innerText = data.new_quantity;
+                document.getElementById(`price-${itemId}`).innerText = Math.round(data.new_total) + ' ₽';
+                document.getElementById('subtotal-price').innerText = Math.round(data.cart_total) + ' ₽';
+                document.getElementById('grand-total').innerText = Math.round(data.cart_total) + ' ₽';
+                document.getElementById('total-qty').innerText = data.cart_quantity;
+                
+                if (data.new_quantity === 0) {
+                    document.getElementById(`item-card-${itemId}`).remove();
+                }
+            }
+        });
+    }
+
+    function removeItem(itemId) {
+        if(confirm('Удалить этот товар из корзины?')) {
+            window.location.href = `/cart/remove/${itemId}/`;
+        }
+    }
+</script>
 {% endblock %}

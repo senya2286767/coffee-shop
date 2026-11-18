@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+import json
 
 def index(request):
     """Главная страница кофейни (без вывода товаров)"""
@@ -29,20 +30,28 @@ def cart_detail(request):
     cart = request.session.get('cart', {})
     cart_items = []
     total_price = 0
+    total_quantity = 0  # <--- 1. ДОБАВЛЯЕМ ПЕРЕМЕННУЮ
 
     for product_id, quantity in cart.items():
-        product = get_object_or_404(Product, id=product_id)
-        item_total = product.price * quantity
-        total_price += item_total
-        cart_items.append({
-            'product': product,
-            'quantity': quantity,
-            'total': item_total
-        })
+        # Небольшой лайфхак: лучше использовать filter().first(), 
+        # чтобы страница не падала с ошибкой 404, если товар удалили из базы, а он остался в корзине.
+        product = Product.objects.filter(id=product_id).first()
+        
+        if product: # Проверяем, что товар существует
+            item_total = product.price * quantity
+            total_price += item_total
+            total_quantity += quantity # <--- 2. СЧИТАЕМ ОБЩЕЕ КОЛИЧЕСТВО
+            
+            cart_items.append({
+                'product': product,
+                'quantity': quantity,
+                'total': item_total
+            })
 
     return render(request, 'core/cart.html', {
         'cart_items': cart_items,
-        'total_price': total_price
+        'total_price': total_price,
+        'total_quantity': total_quantity  # <--- 3. ПЕРЕДАЕМ В ШАБЛОН
     })
 
 def cart_add(request, product_id):
@@ -69,6 +78,68 @@ def cart_remove(request, product_id):
         messages.info(request, 'Товар удален из корзины.')
     
     return redirect('cart_detail')
+
+def cart_update(request, product_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        action = data.get('action')
+
+        # 1. Получаем текущую корзину из сессии (или создаем пустую)
+        cart = request.session.get('cart', {})
+        
+        # ID товара в сессии всегда хранится как строка
+        product_id_str = str(product_id)
+
+        # 2. Меняем количество
+        if product_id_str in cart:
+            if action == 'increase':
+                cart[product_id_str]['quantity'] += 1
+            elif action == 'decrease':
+                cart[product_id_str]['quantity'] -= 1
+                # Если количество стало 0, удаляем товар из корзины
+                if cart[product_id_str]['quantity'] <= 0:
+                    del cart[product_id_str]
+        else:
+            # Если товара еще нет в корзине, а нажали "+"
+            if action == 'increase':
+                product = get_object_or_404(Product, id=product_id)
+                cart[product_id_str] = {
+                    'quantity': 1,
+                    'price': str(product.price) # Сохраняем цену как строку для JSON
+                }
+
+        # 3. Сохраняем обновленную корзину обратно в сессию
+        request.session['cart'] = cart
+        request.session.modified = True # Сообщаем Django, что сессия изменилась
+
+        # 4. Пересчитываем общую сумму и количество
+        total_quantity = 0
+        total_price = 0
+        new_quantity = 0
+        new_total = 0
+
+        for pid, item_data in cart.items():
+            qty = item_data['quantity']
+            price = float(item_data['price'])
+            
+            total_quantity += qty
+            total_price += qty * price
+            
+            # Если это тот товар, который мы только что изменили
+            if pid == product_id_str:
+                new_quantity = qty
+                new_total = qty * price
+
+        # 5. Возвращаем ответ для JS
+        return JsonResponse({
+            'success': True,
+            'new_quantity': new_quantity,
+            'new_total': new_total,
+            'cart_total': total_price,
+            'cart_quantity': total_quantity
+        })
+        
+    return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
 
 def product_detail(request, product_id):
     """Страница конкретного товара"""
@@ -125,3 +196,98 @@ def receipt(request, order_id):
         return HttpResponse('Ошибка при создании PDF', status=500)
         
     return response
+
+
+@login_required # Заказ могут оформлять только авторизованные пользователи
+def checkout(request):
+    """Страница оформления заказа"""
+    cart = request.session.get('cart', {})
+    
+    # Считаем итоги для правой колонки
+    cart_items = []
+    total_price = 0
+    total_quantity = 0
+
+    for product_id, quantity in cart.items():
+        product = Product.objects.filter(id=product_id).first()
+        if product:
+            item_total = product.price * quantity
+            total_price += item_total
+            total_quantity += quantity
+            cart_items.append({'product': product, 'quantity': quantity})
+
+    if not cart_items:
+        messages.error(request, "Ваша корзина пуста")
+        return redirect('cart_detail')
+
+    if request.method == 'POST':
+        # 1. Получаем данные из формы
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
+        delivery = request.POST.get('delivery')
+        payment = request.POST.get('payment')
+
+        # 2. Создаем Заказ (Order)
+        order = Order.objects.create(
+            user=request.user,
+            total_price=total_price,
+            status='new' # Или 'processing', в зависимости от вашей логики
+        )
+
+        # 3. Создаем позиции заказа (OrderItem)
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item['product'],
+                quantity=item['quantity'],
+                price=item['product'].price
+            )
+
+        # 4. Очищаем корзину
+        request.session['cart'] = {}
+        request.session.modified = True
+
+        # 5. Перенаправляем на страницу успеха или на PDF-чек
+        # Если у вас есть страница с чеком (PDF), укажите её URL:
+        # return redirect('receipt_pdf', order_id=order.id)
+        
+        # Пока просто перенаправим на главную или в профиль
+        messages.success(request, f"Заказ #{order.id} успешно оформлен!")
+        return redirect('catalog') # Замените на нужный URL
+
+    # Если это GET-запрос, просто показываем форму
+    return render(request, 'core/checkout.html', {
+        'cart_items': cart_items,
+        'total_price': total_price,
+        'total_quantity': total_quantity
+    })
+
+def order_success(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Рассчитываем время готовности (например, + 15 минут от времени создания заказа)
+    pickup_time = order.created_at + timedelta(minutes=15)
+    
+    return render(request, 'core/order_success.html', {
+        'order': order,
+        'pickup_time': pickup_time
+    })
+
+def download_receipt(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    template_path = 'core/receipt_pdf.html' # Путь к вашему html-шаблону чека
+    context = {'order': order}
+    
+    response = io.BytesIO()
+    template = get_template(template_path)
+    html = template.render(context)
+    
+    # Создаем PDF
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    
+    if pisa_status.err:
+        return HttpResponse('Ошибка при генерации PDF', status=500)
+        
+    response.seek(0)
+    return FileResponse(response, as_attachment=True, filename=f'receipt_{order.id}.pdf')
