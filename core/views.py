@@ -5,16 +5,14 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-<<<<<<< HEAD
 import json
-=======
 from django.http import JsonResponse
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncDate
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login
 from .forms import RegisterForm
->>>>>>> 57ae933e555b02c47b807d81eeba63759c1ab5bf
+
 
 def index(request):
     """Главная страница кофейни (без вывода товаров)"""
