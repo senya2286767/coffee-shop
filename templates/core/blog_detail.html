@@ -1,10 +1,28 @@
-<a href="{% url 'blog_list' %}">← Назад к блогу</a>
-<hr>
-<h1>{{ post.title }}</h1>
-<p><small>Опубликовано: {{ post.created_at|date:"d.m.Y" }}</small></p>
-{% if post.image %}
-    <img src="{{ post.image.url }}" style="max-width: 100%; max-height: 400px;">
-{% endif %}
-<div style="margin-top: 20px;">
-    {{ post.content|linebreaks }}
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="blog-detail-page">
+    <!-- Хлебные крошки -->
+    <p class="breadcrumbs">
+        Главная / {{ post.title }}
+    </p>
+
+    <!-- Заголовок -->
+    <h1 class="page-title">{{ post.title }}</h1>
+    
+    <!-- Мета-информация (категория, дата) -->
+    <p class="blog-meta" style="margin-bottom: 24px;">О КОФЕ · {{ post.created_at|date:"d E Y" }} · 6 минут чтения</p>
+
+    <!-- Большой коричневый блок (Hero) -->
+    <div class="blog-detail-hero">
+        <p class="hero-quote">От фермы до любимой чашки</p>
+    </div>
+
+    <!-- Белая карточка с текстом -->
+    <div class="blog-content-card">
+        <!-- |linebreaks превращает обычный текст в абзацы <p> -->
+        {{ post.content|linebreaks }}
+    </div>
 </div>
+{% endblock %}

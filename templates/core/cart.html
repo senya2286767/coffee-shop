@@ -13,35 +13,32 @@
             <!-- ЛЕВАЯ КОЛОНКА: Список товаров -->
             <div class="cart-items">
                 {% for item in cart_items %}
-                    <!-- Карточка товара -->
-                    {% for item in cart_items %}
-                        <div class="cart-item-card" id="item-card-{{ item.cart_key }}">
-                            <h3 class="cart-item-title">{{ item.product.name }}</h3>
-                            
-                            <p class="cart-item-details">
-                                {{ item.product.volume|default:"300 мл" }} · {{ item.product.milk|default:"классическое молоко" }}
-                                {% if item.stickers %}
-                                    · <span style="color: var(--tokens-color-accent); font-weight: 500;">Стикеры: {{ item.stickers|join:", " }}</span>
-                                {% else %}
-                                    · без стикера
-                                {% endif %}
-                            </p>
-                            
-                            <div class="cart-item-bottom">
-                                <div class="quantity-control">
-                                    <!-- ВАЖНО: Передаем item.cart_key -->
-                                    <button type="button" class="qty-btn" onclick="updateQuantity('{{ item.cart_key }}', 'decrease')">−</button>
-                                    <span class="qty-number" id="qty-{{ item.cart_key }}">{{ item.quantity }}</span>
-                                    <button type="button" class="qty-btn" onclick="updateQuantity('{{ item.cart_key }}', 'increase')">+</button>
-                                </div>
-                                
-                                <div class="cart-item-price" id="price-{{ item.cart_key }}">{{ item.total|floatformat:0 }} ₽</div>
+                    <div class="cart-item-card" id="item-card-{{ item.cart_key }}">
+                        <h3 class="cart-item-title">{{ item.product.name }}</h3>
+                        
+                        <p class="cart-item-details">
+                            {{ item.product.volume|default:"300 мл" }} · {{ item.product.milk|default:"классическое молоко" }}
+                            {% if item.stickers %}
+                                · <span style="color: var(--tokens-color-accent); font-weight: 500;">Стикеры: {{ item.stickers|join:", " }}</span>
+                            {% else %}
+                                · без стикера
+                            {% endif %}
+                        </p>
+                        
+                        <div class="cart-item-bottom">
+                            <div class="quantity-control">
+                                <!-- ПЕРЕДАЕМ cart_key -->
+                                <button type="button" class="qty-btn" onclick="updateQuantity('{{ item.cart_key }}', 'decrease')">−</button>
+                                <span class="qty-number" id="qty-{{ item.cart_key }}">{{ item.quantity }}</span>
+                                <button type="button" class="qty-btn" onclick="updateQuantity('{{ item.cart_key }}', 'increase')">+</button>
                             </div>
                             
-                            <!-- ВАЖНО: Передаем item.cart_key в функцию удаления -->
-                            <button class="cart-item-remove" onclick="removeItem('{{ item.cart_key }}')">Удалить</button>
+                            <div class="cart-item-price" id="price-{{ item.cart_key }}">{{ item.total|floatformat:0 }} ₽</div>
                         </div>
-                    {% endfor %}
+                        
+                        <!-- ПЕРЕДАЕМ cart_key В УДАЛЕНИЕ -->
+                        <button class="cart-item-remove" onclick="removeItem('{{ item.cart_key }}')">Удалить</button>
+                    </div>
                 {% endfor %}
             </div>
 
@@ -105,7 +102,8 @@
     }
 
     function updateQuantity(cartKey, action) {
-        fetch(`/cart/update/${encodeURIComponent(cartKey)}/`, { // encodeURIComponent нужен, так как в ключе есть пробелы и запятые
+        // encodeURIComponent делает ключ безопасным для ссылки (пробелы заменяются на %20 и т.д.)
+        fetch(`/cart/update/${encodeURIComponent(cartKey)}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -129,9 +127,9 @@
         });
     }
 
-    function removeItem(itemId) {
+    function removeItem(cartKey) {
         if(confirm('Удалить этот товар из корзины?')) {
-            window.location.href = `/cart/remove/${itemId}/`;
+            window.location.href = `/cart/remove/${encodeURIComponent(cartKey)}/`;
         }
     }
 </script>

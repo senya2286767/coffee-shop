@@ -315,7 +315,7 @@ body {
 .filter-btn:hover { background-color: var(--tokens-color-cream); }
 .filter-btn.active { font-weight: 500; color: var(--tokens-color-ink); }
 .blog-featured { display: flex; gap: 24px; margin-bottom: 48px; align-items: stretch; }
-.featured-image-box { flex: 1; background-color: var(--tokens-color-coffee); border-radius: var(--tokens-space-radius); padding: 32px; display: flex; flex-direction: column; justify-content: space-between; min-height: 350px; }
+.featured-image-box { flex: 1; background-color: var(--tokens-color-coffee); border-radius: var(--tokens-space-radius); padding: 32px; display: flex; flex-direction: column; justify-content: flex-end; min-height: 350px; }
 .featured-image-box .placeholder-text { font-family: var(--body-font-family); font-size: 12px; color: var(--tokens-color-cream); letter-spacing: 1px; opacity: 0.7; }
 .featured-quote { font-family: var(--display-font-family); font-size: 40px; color: var(--tokens-color-cream); line-height: 1.2; margin: 0; }
 .featured-content-box { flex: 1; background-color: var(--tokens-color-white); border-radius: var(--tokens-space-radius); padding: 40px; display: flex; flex-direction: column; justify-content: center; }
@@ -556,4 +556,111 @@ body {
   color: var(--tokens-color-cream); /* Светлый цвет */
   font-size: 32px;
   line-height: 46.4px;
+}
+
+/* =========================================
+   ДЕТАЛЬНАЯ СТРАНИЦА БЛОГА
+   ========================================= */
+.blog-detail-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.blog-detail-page .breadcrumbs {
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    margin-bottom: 24px;
+}
+
+.blog-detail-page .page-title {
+    font-family: var(--display-font-family);
+    font-size: 48px;
+    color: var(--tokens-color-ink);
+    margin: 0 0 12px 0;
+    line-height: 1.1;
+}
+
+/* Коричневый блок */
+.blog-detail-hero {
+    background-color: var(--tokens-color-coffee);
+    border-radius: var(--tokens-space-radius);
+    padding: 40px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.blog-detail-hero .placeholder-text {
+    font-family: var(--body-font-family);
+    font-size: 12px;
+    color: var(--tokens-color-cream);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+}
+
+.hero-quote {
+    font-family: var(--display-font-family);
+    font-size: 40px;
+    color: var(--tokens-color-cream);
+    line-height: 1.2;
+    margin: 0;
+}
+
+/* Белая карточка с текстом */
+.blog-content-card {
+    background-color: var(--tokens-color-white);
+    border-radius: var(--tokens-space-radius);
+    padding: 48px;
+    box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
+    max-width: 850px; /* Ограничиваем ширину, как на макете */
+    margin-left: 40px; /* Сдвигаем вправо для красоты */
+}
+
+/* Оформление текста внутри карточки */
+.blog-content-card p {
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    color: var(--tokens-color-ink);
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+/* Оформление заголовков, если они есть в тексте */
+.blog-content-card h2, 
+.blog-content-card h3 {
+    font-family: var(--display-font-family);
+    font-size: 24px;
+    color: var(--tokens-color-ink);
+    margin: 32px 0 16px 0;
+}
+
+.blog-content-card h2:first-child,
+.blog-content-card h3:first-child {
+    margin-top: 0;
+}
+
+/* Адаптив для мобилок */
+@media (max-width: 768px) {
+    .blog-detail-page .page-title {
+        font-size: 36px;
+    }
+    .blog-detail-hero {
+        height: 250px;
+        padding: 24px;
+    }
+    .hero-quote {
+        font-size: 28px;
+    }
+    .blog-content-card {
+        padding: 24px;
+        margin-left: 0; /* Убираем сдвиг на телефонах */
+        max-width: 100%;
+    }
 }

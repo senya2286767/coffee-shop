@@ -8,21 +8,12 @@
     <h1 class="page-title">Записки за чашкой кофе</h1>
     <p class="page-subtitle">О вкусе, людях и маленьких ритуалах.</p>
 
-    <!-- Фильтры -->
-    <div class="blog-filters">
-        <button class="filter-btn active">Все истории</button>
-        <button class="filter-btn">О кофе</button>
-        <button class="filter-btn">Наша команда</button>
-        <button class="filter-btn">Рецепты</button>
-    </div>
-
     {% if posts %}
         <!-- Главная (Featured) статья (берем первую) -->
         {% with posts.0 as featured_post %}
         <div class="blog-featured">
             <!-- Левая часть: Картинка/Плейсхолдер -->
             <div class="featured-image-box">
-                <span class="placeholder-text">ФОТО-ПЛЕЙСХОЛДЕР</span>
                 <p class="featured-quote">Из зерна — в чашку</p>
             </div>
             
