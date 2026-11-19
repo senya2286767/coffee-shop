@@ -4,8 +4,9 @@ from datetime import timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse, FileResponse
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.template.loader import get_template
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncDate
@@ -33,20 +34,33 @@ def catalog(request):
 
 def cart_detail(request):
     cart = request.session.get('cart', {})
+    custom_stickers = request.session.get('custom_stickers', {}) # <-- Получаем стикеры
     cart_items = []
     total_price = 0
     total_quantity = 0
 
     for product_id, quantity in cart.items():
         product = Product.objects.filter(id=product_id).first()
+        
         if product:
             item_total = product.price * quantity
             total_price += item_total
             total_quantity += quantity
-            cart_items.append({'product': product, 'quantity': quantity, 'total': item_total})
+            
+            # Берем стикеры для этого конкретного товара (если есть)
+            item_stickers = custom_stickers.get(str(product_id), [])
+            
+            cart_items.append({
+                'product': product,
+                'quantity': quantity,
+                'total': item_total,
+                'stickers': item_stickers  # <-- Передаем в шаблон
+            })
 
     return render(request, 'core/cart.html', {
-        'cart_items': cart_items, 'total_price': total_price, 'total_quantity': total_quantity
+        'cart_items': cart_items,
+        'total_price': total_price,
+        'total_quantity': total_quantity
     })
 
 
@@ -60,8 +74,21 @@ def cart_add(request, product_id):
         cart[str(product_id)] = 1
 
     request.session['cart'] = cart
+
+    # Ловим стикеры
+    stickers = request.GET.get('stickers')
+    if stickers:
+        custom_stickers = request.session.get('custom_stickers', {})
+        custom_stickers[str(product_id)] = stickers.split(',')
+        request.session['custom_stickers'] = custom_stickers
+        request.session.modified = True
+
     messages.success(request, f'Товар «{product.name}» добавлен в корзину!')
-    return redirect(request.META.get('HTTP_REFERER', 'catalog'))
+    
+    # ВОТ ЗДЕСЬ МЕНЯЕМ РЕДИРЕКТ:
+    # Теперь после добавления всегда кидаем в корзину, 
+    # независимо от того, откуда пришел пользователь.
+    return redirect('cart_detail') 
 
 
 def cart_remove(request, product_id):
@@ -120,8 +147,10 @@ def product_detail(request, product_id):
     return render(request, 'core/product_detail.html', {'product': product})
 
 
-def sticker_page(request):
-    return render(request, 'core/sticker.html')
+def sticker_page(request, product_id):
+    # Находим товар по ID. Если товара нет — выдаст ошибку 404.
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, 'core/sticker.html', {'product': product})
 
 
 @login_required
@@ -319,3 +348,26 @@ def profile_view(request):
 def logout_view(request):
     logout(request)
     return redirect('catalog')
+
+def save_stickers(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        stickers = data.get('stickers', [])
+        product_id = data.get('product_id')
+        
+        # Сохраняем стикеры в сессию, привязывая их к конкретному товару
+        # (формат: {'1': ['С собой', 'Тепло'], '2': ['Кофе']})
+        custom_stickers = request.session.get('custom_stickers', {})
+        
+        if stickers:
+            custom_stickers[str(product_id)] = stickers
+        elif str(product_id) in custom_stickers:
+            # Если стикеры убрали (пустой массив), удаляем их из сессии
+            del custom_stickers[str(product_id)]
+            
+        request.session['custom_stickers'] = custom_stickers
+        request.session.modified = True
+        
+        return JsonResponse({'success': True})
+        
+    return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)

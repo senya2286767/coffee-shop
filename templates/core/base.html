@@ -19,7 +19,7 @@
         
         <nav aria-label="Основная навигация">
             <a class="div" href="{% url 'catalog' %}">Каталог</a>
-            <a class="div" href="#blog">Блог</a>
+            <a class="div" href="{% url 'blog_list' %}">Блог</a>
             <a class="div" href="#about">О нас</a>
             <!-- В base.html -->
             {% if user.is_authenticated %}

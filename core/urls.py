@@ -15,7 +15,7 @@ urlpatterns = [
 
     path('product/<int:product_id>/', views.product_detail, name='product_detail'),
 
-    path('sticker/', views.sticker_page, name='sticker_page'),
+    path('sticker/<int:product_id>/', views.sticker_page, name='sticker_page'),
     path('checkout/', views.checkout, name='checkout'),
     path('receipt/<int:order_id>/', views.receipt, name='receipt'),
 
@@ -33,6 +33,7 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('profile/', views.profile_view, name='profile'),
     path('logout/', views.logout_view, name='logout'),
+    path('sticker/save/', views.save_stickers, name='save_stickers'),
 ]
 
 if settings.DEBUG:

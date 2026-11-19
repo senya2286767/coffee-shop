@@ -2,11 +2,8 @@
 {% load static %}
 
 {% block content %}
-<div class="catalog-page">
-    <!-- Хлебные крошки -->
-    <p class="text-wrapper" style="margin-bottom: 24px;">Главная / Каталог</p>
-    
     <!-- Заголовок -->
+    <p class="text-wrapper" style="margin-bottom: 24px;">Главная / Каталог</p>
     <h1 class="div" style="margin-bottom: 12px;">Каталог</h1>
     <p class="text-wrapper-2" style="margin-bottom: 40px; color: var(--tokens-color-coffee);">
         Найдите свой вкус. Приготовим к вашему приходу.
@@ -21,7 +18,6 @@
             
             <div class="filter-group">
                 <p class="filter-label">Категории</p>
-                <!-- Цикл по категориям из базы данных -->
                 <label class="filter-checkbox">
                     <input type="checkbox" checked>
                     <span>Все</span>
@@ -34,75 +30,37 @@
                 {% endfor %}
             </div>
 
-            <div class="filter-group">
-                <p class="filter-label">Цена · 190 — 650 ₽</p>
-            </div>
-
-            <div class="filter-group">
-                <label class="filter-checkbox">
-                    <input type="checkbox">
-                    <span>Без лактозы</span>
-                </label>
-                <label class="filter-checkbox">
-                    <input type="checkbox">
-                    <span>Без сахара</span>
-                </label>
-            </div>
-
             <button class="filter-reset" type="button">Сбросить</button>
         </aside>
 
         <!-- ПРАВАЯ ЧАСТЬ: ТОВАРЫ -->
         <div class="catalog-main">
-            
-            <!-- Верхняя панель (Количество и Сортировка) -->
             <div class="catalog-top-bar">
                 <span class="text-wrapper-2">Найдено {{ products|length }} товаров</span>
                 <span class="text-wrapper-2" style="cursor: pointer;">По популярности ↓</span>
             </div>
 
-                        <!-- Сетка товаров (3 колонки) -->
             <div class="product-grid">
                 {% for product in products %}
                     <article class="view-3 product-card">
-                        
-                        <!-- Ссылка на товар -->
                         <a href="{% url 'product_detail' product.id %}" class="product-link">
-                            
-                            <!-- Блок с картинкой -->
                             <div class="element-wrapper">
                                 {% if product.image %}
                                     <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
                                 {% else %}
-                                    <span class="text-wrapper">ФОТО / 01&nbsp;&nbsp; КОФЕ</span>
+                                    <span class="text-wrapper">ФОТО / 01 КОФЕ</span>
                                 {% endif %}
                             </div>
-                            
-                            <!-- Название -->
                             <h3 class="text-wrapper-9">{{ product.name }}</h3>
-                            
-                            <!-- Цена -->
                             <p class="text-wrapper-2 product-price">
-                                {{ product.price }} ₽
+                                {{ product.price|floatformat:0 }} ₽
                             </p>
-                            
                         </a>
-
                     </article>
                 {% empty %}
-                    <p class="text-wrapper-2">Товаров пока нет. Добавьте их через админку.</p>
+                    <p class="text-wrapper-2">Товаров пока нет.</p>
                 {% endfor %}
-            </div>
-
-            <!-- Пагинация (Визуальная заглушка) -->
-            <div class="pagination">
-                <button class="page-btn arrow">←</button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <button class="page-btn arrow">→</button>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

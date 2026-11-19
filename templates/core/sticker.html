@@ -36,7 +36,7 @@
         <!-- ЦЕНТРАЛЬНАЯ КОЛОНКА: Стакан (Зона для дропа) -->
         <div class="sticker-canvas-wrapper">
             <div class="sticker-canvas-container">
-                <p class="canvas-label">ВАШ ЛАТТЕ</p>
+                <p class="canvas-label">ВАШ НАПИТОК</p>
                 
                 <!-- Сам стакан (сюда падают стикеры) -->
                 <div class="sticker-drop-zone" id="drop-zone">
@@ -50,16 +50,17 @@
 
         <!-- ПРАВАЯ КОЛОНКА: Итог -->
         <aside class="sticker-summary">
-            <h3 class="summary-title">Латте · 300 мл</h3>
+            <!-- Выводим название и объем из базы данных -->
+            <h3 class="summary-title">{{ product.name }} · {{ product.volume }}</h3>
             
             <div class="summary-details">
                 <p class="detail-text">Стакан / кремовый</p>
                 <p class="detail-text">Стикеры / <span id="sticker-count">0</span> до 3 штук</p>
-                <p class="detail-text price">Цена / 320 ₽</p>
+                <!-- Выводим реальную цену товара -->
+                <p class="detail-text price">Цена / {{ product.price|floatformat:0 }} ₽</p>
             </div>
-
             <div class="summary-actions">
-                <button class="btn-primary" onclick="addToCartWithStickers()">
+                <button type="button" class="btn-primary" style="margin-top: 24px;" onclick="addToCartWithStickers()">
                     Готово, в корзину
                 </button>
                 <button class="btn-secondary" onclick="resetStickers()">
@@ -142,28 +143,21 @@
     }
 
         function addToCartWithStickers() {
-        // 1. Собираем текст всех прилепленных стикеров
-        const droppedElements = document.querySelectorAll('.dropped-sticker');
-        const stickersArray = Array.from(droppedElements).map(el => el.innerText);
+            // 1. Собираем текст всех прикрепленных стикеров
+            const droppedElements = document.querySelectorAll('.dropped-sticker');
+            const stickersArray = Array.from(droppedElements).map(el => el.innerText);
+            
+            // 2. Формируем строку из стикеров (например: "Тепло,Кофе")
+            const stickersString = stickersArray.join(',');
 
-        // 2. Отправляем их на сервер (AJAX)
-        fetch('/sticker/save/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'  // Обязательно для Django!
-            },
-            body: JSON.stringify({ stickers: stickersArray })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // 3. Если сохранилось успешно — перекидываем пользователя в корзину
-                window.location.href = "{% url 'cart_detail' %}";
-            } else {
-                alert('Ошибка при сохранении стикеров');
+            // 3. Перенаправляем в корзину, передавая стикеры прямо в адресной строке
+            // Если стикеров нет, просто добавляем товар
+            let url = "/cart/add/{{ product.id }}/";
+            if (stickersString) {
+                url += "?stickers=" + encodeURIComponent(stickersString);
             }
-        });
-    }
+            
+            window.location.href = url;
+        }
 </script>
 {% endblock %}

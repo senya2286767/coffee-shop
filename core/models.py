@@ -19,8 +19,8 @@ class Product(models.Model):
     name = models.CharField(max_length=200, verbose_name='Название')
     description = models.TextField(blank=True, verbose_name='Описание')
     
-    composition = models.TextField(blank=True, verbose_name='Состав')
-    nutritional_value = models.TextField(blank=True, verbose_name='КБЖУ')
+    volume = models.CharField(max_length=50, default='300 мл', verbose_name='Объем')
+    milk = models.CharField(max_length=100, default='Классическое 3,2%', verbose_name='Молоко')
     
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена')
     image = models.ImageField(upload_to='products/', blank=True, null=True, verbose_name='Фото')

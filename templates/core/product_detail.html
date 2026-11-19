@@ -13,9 +13,8 @@
 
     <div class="product-detail-layout">
         
-        <!-- ЛЕВАЯ ЧАСТЬ (Фото и Табы) -->
+                <!-- ЛЕВАЯ ЧАСТЬ (Фото и Описание) -->
         <div class="product-detail-left">
-            
             <!-- Блок с фото (Коричневая рамка) -->
             <div class="product-hero-img">
                 <div class="detail-image-wrapper">
@@ -27,61 +26,41 @@
                 </div>
             </div>
 
-            <!-- Табы -->
-            <div class="product-tabs">
-                <button class="tab-btn">Описание</button>
-                <button class="tab-btn active">Состав</button>
-                <button class="tab-btn">Отзывы</button>
-            </div>
-
-            <!-- Контент состава (выводим из базы) -->
-            <div class="product-tab-content">
-                <h3 class="text-wrapper-12" style="margin-bottom: 16px;">Состав и пищевая ценность</h3>
-                
-                <!-- Если напарник добавил поле composition, оно выведется тут -->
-                <p class="text-wrapper-2" style="margin-bottom: 8px;">
-                    {{ product.composition|default:"Эспрессо, молоко, карамельный соус. Содержит молоко." }}
-                </p>
-                
-                <!-- Если напарник добавил поле nutritional_value, оно выведется тут -->
+            <!-- Описание (вместо табов) -->
+            <div class="product-tab-content" style="margin-top: 24px;">
+                <h3 class="text-wrapper-12" style="margin-bottom: 16px;">Описание</h3>
                 <p class="text-wrapper-2">
-                    {{ product.nutritional_value|default:"На 100 мл: 64 ккал · белки 2,1 г · жиры 3,2 г · углеводы 6,8 г." }}
+                    {{ product.description|default:"Двойной эспрессо, молочная текстура и карамель собственного приготовления." }}
                 </p>
             </div>
         </div>
 
-        <!-- ПРАВАЯ ЧАСТЬ (Опции и Покупка) -->
+                <!-- ПРАВАЯ ЧАСТЬ (Опции и Покупка) -->
         <div class="product-detail-right">
-            <p class="text-wrapper">КОФЕ / БЕСТСЕЛЛЕР</p>
+            <p class="text-wrapper">{{ product.category.name|upper }} / БЕСТСЕЛЛЕР</p>
             <h2 class="text-wrapper-3" style="font-size: 32px;">Нежный, как ваше утро</h2>
-            <p class="text-wrapper-2" style="margin-bottom: 24px;">
-                {{ product.description|default:"Двойной эспрессо, молочная текстура и карамель собственного приготовления." }}
+            
+            <!-- Фиксированный Объем -->
+            <p class="text-wrapper" style="margin-top: 24px; margin-bottom: 8px;">Объем</p>
+            <p class="text-wrapper-2" style="font-size: 18px; margin-bottom: 16px; font-weight: 500;">
+                {{ product.volume }}
             </p>
 
-            <p class="text-wrapper" style="margin-bottom: 8px;">Объем</p>
-            <div class="volume-selector">
-                <button class="volume-btn">250 мл</button>
-                <button class="volume-btn active">300 мл ⌄</button>
-                <button class="volume-btn">400 мл</button>
-            </div>
+            <!-- Фиксированное Молоко -->
+            <p class="text-wrapper" style="margin-bottom: 8px;">Молоко</p>
+            <p class="text-wrapper-2" style="font-size: 18px; margin-bottom: 24px; font-weight: 500;">
+                {{ product.milk }}
+            </p>
 
-            <div class="milk-selector">
-                <p class="text-wrapper" style="margin: 0;">Молоко</p>
-                <select class="milk-dropdown">
-                    <option>Классическое 3,2%</option>
-                    <option>Миндальное</option>
-                    <option>Овсяное</option>
-                    <option>Безлактозное</option>
-                </select>
-            </div>
+            <!-- Цена -->
+            <h2 class="div" style="font-size: 48px; margin: 24px 0;">{{ product.price|floatformat:0 }} ₽</h2>
 
-            <h2 class="div" style="font-size: 48px; margin: 24px 0;">{{ product.price }} ₽</h2>
-
-            <a href="{% url 'cart_add' product.id %}" class="btn-primary">
+            <!-- Кнопки -->
+            <a href="{% url 'cart_add' product.id %}" class="btn-primary" style="max-width: 100%;">
                 Добавить в корзину
             </a>
             
-            <a href="{% url 'sticker_page' %}" class="btn-secondary" style="text-align: center; text-decoration: none;">
+            <a href="{% url 'sticker_page' product.id %}" class="btn-secondary" style="max-width: 100%; text-align: center; text-decoration: none;">
                 Добавить стикеры
             </a>
         </div>

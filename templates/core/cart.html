@@ -17,7 +17,12 @@
                     <div class="cart-item-card" id="item-card-{{ item.product.id }}">
                         <h3 class="cart-item-title">{{ item.product.name }}</h3>
                         <p class="cart-item-details">
-                            {{ item.product.composition|default:"300 мл · классическое молоко · без стикера" }}
+                            {{ item.product.volume|default:"300 мл" }} · {{ item.product.milk|default:"классическое молоко" }}
+                            {% if item.stickers %}
+                                · <span style="color: var(--tokens-color-accent); font-weight: 500;">Стикеры: {{ item.stickers|join:", " }}</span>
+                            {% else %}
+                                · без стикера
+                            {% endif %}
                         </p>
                         
                         <div class="cart-item-bottom">

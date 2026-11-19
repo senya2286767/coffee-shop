@@ -1,12 +1,69 @@
-<h1>Наш блог</h1>
-<a href="{% url 'catalog' %}">Вернуться в каталог</a>
-<hr>
-{% for post in posts %}
-    <div style="margin-bottom: 20px;">
-        <h2><a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a></h2>
-        <p><small>{{ post.created_at|date:"d.m.Y" }}</small></p>
-        <p>{{ post.content|truncatewords:20 }}</p>
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="blog-page">
+    <!-- Шапка страницы -->
+    <p class="breadcrumbs">Главная / Записки за чашкой кофе</p>
+    <h1 class="page-title">Записки за чашкой кофе</h1>
+    <p class="page-subtitle">О вкусе, людях и маленьких ритуалах.</p>
+
+    <!-- Фильтры -->
+    <div class="blog-filters">
+        <button class="filter-btn active">Все истории</button>
+        <button class="filter-btn">О кофе</button>
+        <button class="filter-btn">Наша команда</button>
+        <button class="filter-btn">Рецепты</button>
     </div>
-{% empty %}
-    <p>Статей пока нет. Добавьте их через админку.</p>
-{% endfor %}
+
+    {% if posts %}
+        <!-- Главная (Featured) статья (берем первую) -->
+        {% with posts.0 as featured_post %}
+        <div class="blog-featured">
+            <!-- Левая часть: Картинка/Плейсхолдер -->
+            <div class="featured-image-box">
+                <span class="placeholder-text">ФОТО-ПЛЕЙСХОЛДЕР</span>
+                <p class="featured-quote">Из зерна — в чашку</p>
+            </div>
+            
+            <!-- Правая часть: Текст -->
+            <div class="featured-content-box">
+                <p class="blog-meta">О КОФЕ / {{ featured_post.created_at|date:"d E Y"|upper }}</p>
+                <h2 class="featured-title">{{ featured_post.title }}</h2>
+                <p class="featured-excerpt">{{ featured_post.content|truncatewords:15 }}</p>
+                <a href="{% url 'blog_detail' featured_post.id %}" class="btn-primary" style="width: auto; align-self: flex-start;">
+                    Читать историю →
+                </a>
+            </div>
+        </div>
+        {% endwith %}
+
+        <!-- Сетка остальных статей (пропускаем первую с помощью slice) -->
+        <div class="blog-grid">
+            {% for post in posts|slice:"1:" %}
+                <article class="blog-card">
+                    <a href="{% url 'blog_detail' post.id %}" class="blog-link">
+                        <!-- Блок с картинкой -->
+                        <div class="blog-image-placeholder">
+                            {% if post.image %}
+                                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="blog-img">
+                            {% else %}
+                                <span class="placeholder-text">ФОТО / 02 ИСТОРИИ</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Текстовый блок -->
+                        <div class="blog-card-content">
+                            <h3 class="blog-card-title">{{ post.title }}</h3>
+                            <p class="blog-card-meta">Истории · 6 минут чтения</p>
+                            <span class="blog-read-more">Читать историю →</span>
+                        </div>
+                    </a>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-wrapper-2">Здесь пока нет статей. Загляните позже!</p>
+    {% endif %}
+</div>
+{% endblock %}
