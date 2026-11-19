@@ -1,6 +1,7 @@
 import json
 import io
 from datetime import timedelta
+from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse, FileResponse
@@ -9,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.template.loader import get_template
 from django.db.models import Count, Sum
+from django.db.models import Sum, Count
 from django.db.models.functions import TruncDate
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login
@@ -153,58 +155,79 @@ def sticker_page(request, product_id):
 
 @login_required
 def checkout(request):
-    """Оформление заказа (принимает и GET, и POST)"""
+    """Страница оформления заказа"""
     cart = request.session.get('cart', {})
+    
     cart_items = []
     total_price = 0
     total_quantity = 0
+    all_stickers = {} # Здесь будем собирать все стикеры для заказа
 
-    for product_id, quantity in cart.items():
+    for cart_key, quantity in cart.items():
+        # Разделяем ключ на ID товара и стикеры
+        parts = cart_key.split('_', 1)
+        product_id = parts[0]
+        stickers_str = parts[1] if len(parts) > 1 else ""
+
         product = Product.objects.filter(id=product_id).first()
+        
         if product:
             item_total = product.price * quantity
             total_price += item_total
             total_quantity += quantity
-            cart_items.append({'product': product, 'quantity': quantity})
+            
+            cart_items.append({
+                'product': product, 
+                'quantity': quantity
+            })
+            
+            # Если есть стикеры, сохраняем их для истории заказа
+            if stickers_str:
+                all_stickers[str(product.id)] = stickers_str.split(',')
 
     if not cart_items:
-        messages.warning(request, 'Ваша корзина пуста.')
+        messages.error(request, "Ваша корзина пуста")
         return redirect('cart_detail')
 
     if request.method == 'POST':
-        # 1. Создаем заказ
-        order = Order.objects.create(user=request.user, total_price=total_price)
-        
-        # 2. Добавляем товары
+        # 1. Получаем данные из формы
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
+        # delivery = request.POST.get('delivery')
+        # payment = request.POST.get('payment')
+
+        # 2. Создаем Заказ (Order)
+        # Внимание: сюда мы передаем all_stickers вместо старой переменной stickers_list
+        order = Order.objects.create(
+            user=request.user,
+            total_price=total_price,
+            status='new',
+            stickers=all_stickers 
+        )
+
+        # 3. Создаем позиции заказа (OrderItem)
         for item in cart_items:
             OrderItem.objects.create(
-                order=order, product=item['product'], quantity=item['quantity'], price=item['product'].price
+                order=order,
+                product=item['product'],
+                quantity=item['quantity'],
+                price=item['product'].price
             )
 
-        # 3. Забираем стикеры из сессии и сохраняем их в заказ
-        custom_stickers = request.session.get('custom_stickers', {})
-        # Собираем все стикеры со всех товаров в один список для чека
-        all_stickers = []
-        for p_id, st_list in custom_stickers.items():
-            all_stickers.extend(st_list)
-            
-        if all_stickers:
-            order.stickers = all_stickers
-            
-        order.save() # <-- СОХРАНЯЕМ ЗАКАЗ (обязательно!)
-        
-        # 4. Очищаем корзину и стикеры
+        # 4. Очищаем корзину
         request.session['cart'] = {}
-        request.session['custom_stickers'] = {}
+        request.session['custom_stickers'] = {} # Чистим и стикеры
         request.session.modified = True
 
-        messages.success(request, f'Заказ #{order.id} успешно оформлен!')
-        return redirect('receipt', order_id=order.id) # Или order_success
+        # 5. Перенаправляем на страницу успеха
+        return redirect('order_success', order_id=order.id)
 
     return render(request, 'core/checkout.html', {
-        'cart_items': cart_items, 'total_price': total_price, 'total_quantity': total_quantity
+        'cart_items': cart_items,
+        'total_price': total_price,
+        'total_quantity': total_quantity
     })
-
 
 @login_required
 def order_success(request, order_id):
@@ -308,36 +331,47 @@ def register_view(request):
 
 @login_required
 def profile_view(request):
-    # Получаем все заказы текущего пользователя (от новых к старым)
     user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
     
-    return render(request, 'core/profile.html', {
+    context = {
         'orders': user_orders
-    })
+    }
 
-def logout_view(request):
-    logout(request)
-    return redirect('catalog')
+    # Если зашел администратор, считаем для него статистику
+    if request.user.is_staff:
+        today = timezone.now().date()
+        
+        orders_today = Order.objects.filter(created_at__date=today)
+        revenue_today = orders_today.aggregate(total=Sum('total_price'))['total'] or 0
+        count_today = orders_today.count()
+        avg_check = int(revenue_today / count_today) if count_today > 0 else 0
+        in_progress = Order.objects.filter(status__in=['new', 'processing']).count()
 
-def save_stickers(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        stickers = data.get('stickers', [])
-        product_id = data.get('product_id')
+        chart_labels = []
+        chart_data = []
+        weekdays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
         
-        custom_stickers = request.session.get('custom_stickers', {})
-        
-        if stickers:
-            custom_stickers[str(product_id)] = stickers
-        elif str(product_id) in custom_stickers:
-            del custom_stickers[str(product_id)]
-            
-        request.session['custom_stickers'] = custom_stickers
-        request.session.modified = True
-        
-        return JsonResponse({'success': True})
-        
-    return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
+        for i in range(6, -1, -1):
+            day = today - timedelta(days=i)
+            daily_revenue = Order.objects.filter(created_at__date=day).aggregate(total=Sum('total_price'))['total'] or 0
+            label = f"{day.day} {weekdays[day.weekday()]}"
+            chart_labels.append(label)
+            chart_data.append(float(daily_revenue))
+
+        recent_orders = Order.objects.all().order_by('-created_at')[:5]
+
+        context.update({
+            'today_date': today,
+            'revenue_today': revenue_today,
+            'count_today': count_today,
+            'avg_check': avg_check,
+            'in_progress': in_progress,
+            'chart_labels': chart_labels,
+            'chart_data': chart_data,
+            'recent_orders': recent_orders,
+        })
+
+    return render(request, 'core/profile.html', context)
 
 def login_view(request):
     if request.method == 'POST':
@@ -358,3 +392,51 @@ def login_view(request):
             messages.error(request, "Неверная почта или пароль")
             
     return render(request, 'core/login.html')
+
+@staff_member_required # Доступ только для админов
+def admin_stats_view(request):
+    today = timezone.now().date()
+    
+    # 1. Статистика за сегодня
+    orders_today = Order.objects.filter(created_at__date=today)
+    revenue_today = orders_today.aggregate(total=Sum('total_price'))['total'] or 0
+    count_today = orders_today.count()
+    avg_check = int(revenue_today / count_today) if count_today > 0 else 0
+    
+    # "В работе" (заказы со статусом new или processing)
+    in_progress = Order.objects.filter(status__in=['new', 'processing']).count()
+
+    # 2. Данные для графика (за последние 7 дней)
+    chart_labels = []
+    chart_data = []
+    for i in range(6, -1, -1): # От 6 дней назад до сегодня
+        day = today - timedelta(days=i)
+        daily_revenue = Order.objects.filter(created_at__date=day).aggregate(total=Sum('total_price'))['total'] or 0
+        
+        # Форматируем дату для графика (например, "11 ср")
+        months = ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"]
+        weekdays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
+        label = f"{day.day} {weekdays[day.weekday()]}"
+        
+        chart_labels.append(label)
+        chart_data.append(float(daily_revenue))
+
+    # 3. Последние 5 заказов для таблицы
+    recent_orders = Order.objects.all().order_by('-created_at')[:5]
+
+    context = {
+        'today_date': today,
+        'revenue_today': revenue_today,
+        'count_today': count_today,
+        'avg_check': avg_check,
+        'in_progress': in_progress,
+        'chart_labels': chart_labels,
+        'chart_data': chart_data,
+        'recent_orders': recent_orders,
+        'admin_name': request.user.first_name or request.user.username
+    }
+    return render(request, 'core/admin_stats.html', context)
+
+def logout_view(request):
+    logout(request)
+    return redirect('catalog')

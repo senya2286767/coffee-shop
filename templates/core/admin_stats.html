@@ -1,0 +1,157 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-page">
+    <!-- Хлебные крошки и заголовок -->
+    <p class="breadcrumbs">Главная / Профиль / Статистика</p>
+    <h1 class="page-title">Статистика продаж</h1>
+    <p class="page-subtitle">Доброе утро, {{ user.first_name|default:user.username }}. Данные за сегодня.</p>
+
+    <!-- Сетка профиля -->
+    <div class="profile-layout">
+        
+        <!-- ЛЕВАЯ КОЛОНКА: Боковое меню -->
+        <aside class="profile-sidebar">
+            <a href="{% url 'profile' %}" class="sidebar-btn">Мои заказы</a>
+            
+            {% if user.is_staff %}
+                <a href="{% url 'admin_stats' %}" class="sidebar-btn active">Статистика</a>
+            {% endif %}
+            
+            <a href="{% url 'logout' %}" class="sidebar-btn">Выйти</a>
+        </aside>
+
+        <!-- ПРАВАЯ КОЛОНКА: Сама статистика -->
+        <div class="profile-main" style="padding: 0; background: transparent; box-shadow: none;">
+            
+            <!-- Карточки статистики -->
+            <div class="stats-cards-grid">
+                <div class="stats-card">
+                    <p class="stats-label">Выручка</p>
+                    <h2 class="stats-value">{{ revenue_today|floatformat:0 }} ₽</h2>
+                    <p class="stats-trend positive">+12,4% к вчера</p>
+                </div>
+                <div class="stats-card">
+                    <p class="stats-label">Заказы</p>
+                    <h2 class="stats-value">{{ count_today }}</h2>
+                    <p class="stats-trend positive">+8 за сегодня</p>
+                </div>
+                <div class="stats-card">
+                    <p class="stats-label">Средний чек</p>
+                    <h2 class="stats-value">{{ avg_check }} ₽</h2>
+                    <p class="stats-trend positive">+3,1% к вчера</p>
+                </div>
+                <div class="stats-card">
+                    <p class="stats-label">В работе</p>
+                    <h2 class="stats-value">{{ in_progress }}</h2>
+                    <p class="stats-trend" style="color: #2E7D32;">Время выдачи 12 мин</p>
+                </div>
+            </div>
+
+            <!-- График выручки -->
+            <div class="stats-chart-card">
+                <h3 class="form-section-title" style="margin-bottom: 24px;">Выручка · последние 7 дней</h3>
+                <div style="height: 300px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Таблица последних заказов -->
+            <div class="stats-table-card">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Заказ</th>
+                            <th>Клиент</th>
+                            <th>Сумма</th>
+                            <th>Статус</th>
+                            <th>Время</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.user.first_name|default:order.user.username }} {{ order.user.last_name }}</td>
+                            <td>{{ order.total_price|floatformat:0 }} ₽</td>
+                            <td>{{ order.get_status_display }}</td>
+                            <td>{{ order.created_at|time:"H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Заказов пока нет</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Подключаем Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const labels = {{ chart_labels|safe }};
+    const dataValues = {{ chart_data|safe }};
+
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Выручка (₽)',
+                data: dataValues,
+                backgroundColor: (context) => {
+                    const index = context.dataIndex;
+                    if (index === dataValues.length - 1) return '#C47A4A'; // Акцентный
+                    return '#6F4E37'; // Кофейный
+                },
+                borderRadius: 6,
+                barThickness: 40
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y.toLocaleString('ru-RU') + ' ₽';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { display: false, beginAtZero: true },
+                x: { grid: { display: false }, ticks: { font: { family: 'Inter' } } }
+            }
+        },
+        plugins: [{
+            afterDatasetsDraw: function(chart) {
+                const ctx = chart.ctx;
+                chart.data.datasets.forEach((dataset, i) => {
+                    const meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, index) => {
+                        const data = dataset.data[index];
+                        if (data > 0) {
+                            ctx.fillStyle = '#fff';
+                            ctx.font = 'bold 12px Inter';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            let text = data >= 1000 ? (data/1000).toFixed(1).replace('.', ',') + 'к' : data;
+                            ctx.fillText(text, bar.x, bar.y + 20);
+                        }
+                    });
+                });
+            }
+        }]
+    });
+</script>
+{% endblock %}

@@ -2,13 +2,17 @@
 <html>
 <head>
     <style>
+        @font-face {
+            font-family: "DejaVuSans";
+        src: url("/static/fonts/DejaVuSans.ttf");
+        }
         /* Базовые стили для PDF */
         @page {
             size: a4;
             margin: 2cm;
         }
         body {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "DejaVuSans", Helvetica, sans-serif;
             color: #2b2118; /* Темно-коричневый цвет бренда */
             font-size: 12px;
             line-height: 1.5;
@@ -16,7 +20,7 @@
         
         /* Заголовок и бренд */
         .brand {
-            font-family: "Times New Roman", Times, serif; /* Замена Playfair Display */
+            font-family: "DejaVuSans", Helvetica, sans-serif;/* Замена Playfair Display */
             font-size: 26px;
             color: #2b2118;
             margin-bottom: 8px;

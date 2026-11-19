@@ -28,15 +28,15 @@ urlpatterns = [
     path('api/stats/popular/', views.stats_popular_products, name='api_stats_popular'),
     path('api/stats/orders/', views.stats_orders_by_day, name='api_stats_orders'),
     path('register/', views.register, name='register'),
-    path('sticker/save/', views.save_stickers, name='save_stickers'),
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
     path('profile/', views.profile_view, name='profile'),
     path('logout/', views.logout_view, name='logout'),
-    path('sticker/save/', views.save_stickers, name='save_stickers'),
+    #path('sticker/save/', views.save_stickers, name='save_stickers'),
     path('cart/update/<str:cart_key>/', views.cart_update, name='cart_update'),
     path('cart/remove/<str:cart_key>/', views.cart_remove, name='cart_remove'),
     path('stats/', views.stats_page, name='stats_page'),
+    path('admin-stats/', views.admin_stats_view, name='admin_stats'),
 ]
 
 if settings.DEBUG:
