@@ -34,10 +34,7 @@ def catalog(request):
 
 def cart_detail(request):
     cart = request.session.get('cart', {})
-<<<<<<< HEAD
-=======
     custom_stickers = request.session.get('custom_stickers', {})
->>>>>>> 1b47771278ccfaa0b07bc174b56e1cd4808df8b1
     cart_items = []
     total_price = 0
     total_quantity = 0
