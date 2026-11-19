@@ -34,6 +34,10 @@ def catalog(request):
 
 def cart_detail(request):
     cart = request.session.get('cart', {})
+<<<<<<< HEAD
+=======
+    custom_stickers = request.session.get('custom_stickers', {})
+>>>>>>> 1b47771278ccfaa0b07bc174b56e1cd4808df8b1
     cart_items = []
     total_price = 0
     total_quantity = 0
@@ -57,7 +61,7 @@ def cart_detail(request):
                 'quantity': quantity,
                 'total': item_total,
                 'stickers': stickers_list,
-                'cart_key': cart_key # Передаем уникальный ключ в шаблон
+                'cart_key': cart_key
             })
 
     return render(request, 'core/cart.html', {
@@ -158,7 +162,6 @@ def checkout(request):
     total_price = 0
     total_quantity = 0
 
-    # Считаем корзину для отображения на странице оформления
     for product_id, quantity in cart.items():
         product = Product.objects.filter(id=product_id).first()
         if product:
@@ -172,30 +175,35 @@ def checkout(request):
         return redirect('cart_detail')
 
     if request.method == 'POST':
-        # Создаем заказ
+        # 1. Создаем заказ
         order = Order.objects.create(user=request.user, total_price=total_price)
         
+        # 2. Добавляем товары
         for item in cart_items:
             OrderItem.objects.create(
                 order=order, product=item['product'], quantity=item['quantity'], price=item['product'].price
             )
 
-        # Логика стикеров (принимаем из формы)
-            # Забираем стикеры из сессии (их туда положил скрипт напарника)
-    stickers_list = request.session.get('selected_stickers', [])
-    if stickers_list:
-        order.stickers = stickers_list
-        # Очищаем сессию после того, как перенесли их в заказ
-        del request.session['selected_stickers']
-
-        order.save()
+        # 3. Забираем стикеры из сессии и сохраняем их в заказ
+        custom_stickers = request.session.get('custom_stickers', {})
+        # Собираем все стикеры со всех товаров в один список для чека
+        all_stickers = []
+        for p_id, st_list in custom_stickers.items():
+            all_stickers.extend(st_list)
+            
+        if all_stickers:
+            order.stickers = all_stickers
+            
+        order.save() # <-- СОХРАНЯЕМ ЗАКАЗ (обязательно!)
+        
+        # 4. Очищаем корзину и стикеры
         request.session['cart'] = {}
+        request.session['custom_stickers'] = {}
         request.session.modified = True
 
         messages.success(request, f'Заказ #{order.id} успешно оформлен!')
-        return redirect('receipt', order_id=order.id)
+        return redirect('receipt', order_id=order.id) # Или order_success
 
-    # Если GET-запрос — показываем страницу checkout.html (вёрстка напарника)
     return render(request, 'core/checkout.html', {
         'cart_items': cart_items, 'total_price': total_price, 'total_quantity': total_quantity
     })
@@ -284,38 +292,6 @@ def register(request):
         form = RegisterForm()
     return render(request, 'core/register.html', {'form': form})
 
-def save_stickers(request):
-    """Сохранение стикеров в сессию (принимает AJAX-запрос от JS)"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            stickers = data.get('stickers', [])
-            request.session['selected_stickers'] = stickers
-            return JsonResponse({'success': True, 'stickers': stickers})
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False}, status=400)
-    return JsonResponse({'success': False}, status=400)
-
-def login_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        
-        # Ищем пользователя по email (стандартный authenticate ищет по username)
-        try:
-            user_obj = User.objects.get(email=email)
-            user = authenticate(request, username=user_obj.username, password=password)
-        except User.DoesNotExist:
-            user = None
-
-        if user is not None:
-            login(request, user)
-            return redirect('profile') # <-- Сюда перенаправляем после входа (например, в профиль)
-        else:
-            messages.error(request, "Неверная почта или пароль")
-            
-    return render(request, 'core/login.html')
-
 
 def register_view(request):
     if request.method == 'POST':
@@ -352,14 +328,11 @@ def save_stickers(request):
         stickers = data.get('stickers', [])
         product_id = data.get('product_id')
         
-        # Сохраняем стикеры в сессию, привязывая их к конкретному товару
-        # (формат: {'1': ['С собой', 'Тепло'], '2': ['Кофе']})
         custom_stickers = request.session.get('custom_stickers', {})
         
         if stickers:
             custom_stickers[str(product_id)] = stickers
         elif str(product_id) in custom_stickers:
-            # Если стикеры убрали (пустой массив), удаляем их из сессии
             del custom_stickers[str(product_id)]
             
         request.session['custom_stickers'] = custom_stickers
@@ -368,3 +341,23 @@ def save_stickers(request):
         return JsonResponse({'success': True})
         
     return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
+
+def login_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        # Ищем пользователя по email (стандартный authenticate ищет по username)
+        try:
+            user_obj = User.objects.get(email=email)
+            user = authenticate(request, username=user_obj.username, password=password)
+        except User.DoesNotExist:
+            user = None
+
+        if user is not None:
+            login(request, user)
+            return redirect('profile')
+        else:
+            messages.error(request, "Неверная почта или пароль")
+            
+    return render(request, 'core/login.html')
