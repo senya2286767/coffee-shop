@@ -5,18 +5,22 @@
 <div class="profile-page">
 
     {% if user.is_staff %}
-        <!-- ========================================== -->
-        <!-- ВЕРСТКА ДЛЯ АДМИНИСТРАТОРА (ДАШБОРД)       -->
-        <!-- ========================================== -->
-        <div class="admin-header">
+                <div class="admin-header">
             <p class="breadcrumbs" style="text-transform: uppercase; margin-bottom: 0;">УПРАВЛЕНИЕ КОФЕЙНЕЙ</p>
-            <p class="text-wrapper" style="color: var(--tokens-color-coffee); margin: 0;">Лесная, 12 &nbsp; / &nbsp; {{ user.first_name|default:user.username }}, администратор</p>
+            
+            <div style="display: flex; align-items: center; gap: 24px;">
+                <p class="text-wrapper" style="color: var(--tokens-color-coffee); margin: 0;">
+                    Лесная, 12 &nbsp; / &nbsp; {{ user.first_name|default:user.username }}, администратор
+                </p>
+                <a href="{% url 'logout' %}" class="btn-secondary" style="width: auto; padding: 8px 16px; margin-bottom: 0; font-size: 12px;">
+                    Выйти
+                </a>
+            </div>
         </div>
 
         <h1 class="page-title" style="margin-top: 24px;">Доброе утро, {{ user.first_name|default:user.username }}</h1>
         <p class="page-subtitle">{{ today_date|date:"l, d E Y" }} · данные за сегодня</p>
 
-        <!-- 4 Карточки -->
         <div class="stats-cards-grid">
             <div class="stats-card">
                 <p class="stats-label">Выручка</p>

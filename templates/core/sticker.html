@@ -3,28 +3,18 @@
 
 {% block content %}
 <div class="catalog-page">
-    <!-- Хлебные крошки -->
     <p class="text-wrapper" style="margin-bottom: 24px;">Главная / Стакан с вашим характером</p>
     
-    <!-- Заголовок -->
     <h1 class="div" style="margin-bottom: 12px;">Стакан с вашим характером</h1>
     <p class="text-wrapper-2" style="margin-bottom: 40px; color: var(--tokens-color-coffee);">
         Перетащите стикер на стакан. Набор стикеров — бесплатно к напитку.
     </p>
 
-    <!-- Сетка из 3 колонок -->
     <div class="sticker-layout">
         
-        <!-- ЛЕВАЯ КОЛОНКА: Палитра стикеров -->
         <aside class="sticker-palette">
             <h3 class="filter-title">Стикеры</h3>
             
-            <div class="sticker-tabs">
-                <button class="tab-btn active">Все</button>
-                <button class="tab-btn">Настроение</button>
-                <button class="tab-btn">Сезон</button>
-            </div>
-
             <div class="sticker-list" id="sticker-list">
                 <div class="sticker-item" draggable="true">С собой — тепло</div>
                 <div class="sticker-item" draggable="true">Кофе сначала</div>
@@ -33,12 +23,10 @@
             </div>
         </aside>
 
-        <!-- ЦЕНТРАЛЬНАЯ КОЛОНКА: Стакан (Зона для дропа) -->
         <div class="sticker-canvas-wrapper">
             <div class="sticker-canvas-container">
                 <p class="canvas-label">ВАШ НАПИТОК</p>
                 
-                <!-- Сам стакан (сюда падают стикеры) -->
                 <div class="sticker-drop-zone" id="drop-zone">
                     <div class="sticker-placeholder" id="placeholder">
                         Тёплое<br>место
@@ -48,15 +36,12 @@
             </div>
         </div>
 
-        <!-- ПРАВАЯ КОЛОНКА: Итог -->
         <aside class="sticker-summary">
-            <!-- Выводим название и объем из базы данных -->
             <h3 class="summary-title">{{ product.name }} · {{ product.volume }}</h3>
             
             <div class="summary-details">
                 <p class="detail-text">Стакан / кремовый</p>
                 <p class="detail-text">Стикеры / <span id="sticker-count">0</span> до 3 штук</p>
-                <!-- Выводим реальную цену товара -->
                 <p class="detail-text price">Цена / {{ product.price|floatformat:0 }} ₽</p>
             </div>
             <div class="summary-actions">
@@ -72,7 +57,6 @@
     </div>
 </div>
 
-<!-- СКРИПТ ДЛЯ DRAG-AND-DROP -->
 <script>
     const stickers = document.querySelectorAll('.sticker-item');
     const dropZone = document.getElementById('drop-zone');
@@ -143,15 +127,11 @@
     }
 
         function addToCartWithStickers() {
-            // 1. Собираем текст всех прикрепленных стикеров
             const droppedElements = document.querySelectorAll('.dropped-sticker');
             const stickersArray = Array.from(droppedElements).map(el => el.innerText);
             
-            // 2. Формируем строку из стикеров (например: "Тепло,Кофе")
             const stickersString = stickersArray.join(',');
 
-            // 3. Перенаправляем в корзину, передавая стикеры прямо в адресной строке
-            // Если стикеров нет, просто добавляем товар
             let url = "/cart/add/{{ product.id }}/";
             if (stickersString) {
                 url += "?stickers=" + encodeURIComponent(stickersString);
