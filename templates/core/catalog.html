@@ -12,25 +12,34 @@
     <!-- Сетка: Фильтры слева + Товары справа -->
     <div class="catalog-layout">
         
-        <!-- ЛЕВАЯ ПАНЕЛЬ С ФИЛЬТРАМИ -->
+                <!-- ЛЕВАЯ ПАНЕЛЬ С ФИЛЬТРАМИ -->
         <aside class="filter-sidebar">
             <h3 class="filter-title">Фильтры</h3>
             
-            <div class="filter-group">
-                <p class="filter-label">Категории</p>
-                <label class="filter-checkbox">
-                    <input type="checkbox" checked>
-                    <span>Все</span>
-                </label>
-                {% for cat in categories %}
-                <label class="filter-checkbox">
-                    <input type="checkbox">
-                    <span>{{ cat.name }}</span>
-                </label>
-                {% endfor %}
-            </div>
+            <!-- Обертка в форму для GET-запроса -->
+            <form method="GET" action="{% url 'catalog' %}" id="filter-form">
+                <div class="filter-group">
+                    <p class="filter-label">Категории</p>
+                    
+                    <!-- Чекбокс "Все" -->
+                    <label class="filter-checkbox">
+                        <input type="checkbox" 
+                               onclick="window.location.href='{% url 'catalog' %}'" 
+                               {% if not selected_categories %}checked{% endif %}>
+                        <span>Все</span>
+                    </label>
 
-            <button class="filter-reset" type="button">Сбросить</button>
+                    <!-- Чекбоксы категорий из базы данных -->
+                    {% for cat in categories %}
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="category" value="{{ cat.slug }}" 
+                               {% if cat.slug in selected_categories %}checked{% endif %}
+                               onchange="document.getElementById('filter-form').submit();">
+                        <span>{{ cat.name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </form>
         </aside>
 
         <!-- ПРАВАЯ ЧАСТЬ: ТОВАРЫ -->

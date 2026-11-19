@@ -25,13 +25,22 @@ def index(request):
 
 
 def catalog(request):
-    products = Product.objects.filter(is_available=True)
     categories = Category.objects.all()
-    category_slug = request.GET.get('category')
-    if category_slug:
-        products = products.filter(category__slug=category_slug)
+    products = Product.objects.all()
+    
+    # Получаем выбранные категории из URL (например: ?category=coffee&category=tea)
+    selected_categories = request.GET.getlist('category')
+    
+    # Если выбраны какие-то категории, фильтруем товары
+    if selected_categories:
+        products = products.filter(category__slug__in=selected_categories)
 
-    return render(request, 'core/catalog.html', {'products': products, 'categories': categories})
+    context = {
+        'categories': categories,
+        'products': products,
+        'selected_categories': selected_categories, # Передаем в шаблон, чтобы чекбоксы не сбрасывались
+    }
+    return render(request, 'core/catalog.html', context)
 
 
 def cart_detail(request):

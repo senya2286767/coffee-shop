@@ -3,15 +3,11 @@
 
 {% block content %}
 <div class="profile-page">
-    <!-- Хлебные крошки и заголовок -->
     <p class="breadcrumbs">Главная / Профиль / Статистика</p>
     <h1 class="page-title">Статистика продаж</h1>
     <p class="page-subtitle">Доброе утро, {{ user.first_name|default:user.username }}. Данные за сегодня.</p>
 
-    <!-- Сетка профиля -->
     <div class="profile-layout">
-        
-        <!-- ЛЕВАЯ КОЛОНКА: Боковое меню -->
         <aside class="profile-sidebar">
             <a href="{% url 'profile' %}" class="sidebar-btn">Мои заказы</a>
             
@@ -22,10 +18,8 @@
             <a href="{% url 'logout' %}" class="sidebar-btn">Выйти</a>
         </aside>
 
-        <!-- ПРАВАЯ КОЛОНКА: Сама статистика -->
         <div class="profile-main" style="padding: 0; background: transparent; box-shadow: none;">
             
-            <!-- Карточки статистики -->
             <div class="stats-cards-grid">
                 <div class="stats-card">
                     <p class="stats-label">Выручка</p>
@@ -49,7 +43,6 @@
                 </div>
             </div>
 
-            <!-- График выручки -->
             <div class="stats-chart-card">
                 <h3 class="form-section-title" style="margin-bottom: 24px;">Выручка · последние 7 дней</h3>
                 <div style="height: 300px;">
@@ -57,7 +50,6 @@
                 </div>
             </div>
 
-            <!-- Таблица последних заказов -->
             <div class="stats-table-card">
                 <table class="admin-table">
                     <thead>
@@ -91,7 +83,6 @@
     </div>
 </div>
 
-<!-- Подключаем Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const labels = {{ chart_labels|safe }};
@@ -108,8 +99,8 @@
                 data: dataValues,
                 backgroundColor: (context) => {
                     const index = context.dataIndex;
-                    if (index === dataValues.length - 1) return '#C47A4A'; // Акцентный
-                    return '#6F4E37'; // Кофейный
+                    if (index === dataValues.length - 1) return '#C47A4A'; 
+                    return '#6F4E37'; 
                 },
                 borderRadius: 6,
                 barThickness: 40
