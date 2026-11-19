@@ -95,17 +95,17 @@ def cart_add(request, product_id):
     return redirect('cart_detail') 
 
 
-def cart_remove(request, product_id):
-    """Удаление товара из корзины"""
+def cart_remove(request, cart_key):
+    """Удаление конкретного товара (со стикерами или без) из корзины"""
     cart = request.session.get('cart', {})
-    # Ищем ключ, который начинается с ID товара (чтобы удалить и со стикерами, и без)
-    keys_to_delete = [key for key in cart.keys() if key.startswith(str(product_id))]
     
-    for key in keys_to_delete:
-        del cart[key]
+    # Если такой ключ есть в корзине — удаляем его
+    if cart_key in cart:
+        del cart[cart_key]
+        request.session['cart'] = cart
+        request.session.modified = True # Обязательно говорим Django, что сессия изменилась
+        messages.info(request, 'Товар удален из корзины.')
         
-    request.session['cart'] = cart
-    messages.info(request, 'Товар удален из корзины.')
     return redirect('cart_detail')
 
 
