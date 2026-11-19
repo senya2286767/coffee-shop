@@ -10,18 +10,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.template.loader import get_template
 from django.db.models import Count, Sum
-from django.db.models import Sum, Count
 from django.db.models.functions import TruncDate
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth import login
 from xhtml2pdf import pisa
 from django.contrib.staticfiles import finders
 
 from .models import Product, Category, Order, OrderItem, BlogPost
 from .forms import RegisterForm
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-import os 
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 
@@ -101,11 +96,16 @@ def cart_add(request, product_id):
 
 
 def cart_remove(request, product_id):
+    """Удаление товара из корзины"""
     cart = request.session.get('cart', {})
-    if str(product_id) in cart:
-        del cart[str(product_id)]
-        request.session['cart'] = cart
-        messages.info(request, 'Товар удален из корзины.')
+    # Ищем ключ, который начинается с ID товара (чтобы удалить и со стикерами, и без)
+    keys_to_delete = [key for key in cart.keys() if key.startswith(str(product_id))]
+    
+    for key in keys_to_delete:
+        del cart[key]
+        
+    request.session['cart'] = cart
+    messages.info(request, 'Товар удален из корзины.')
     return redirect('cart_detail')
 
 
@@ -114,26 +114,30 @@ def cart_update(request, product_id):
         data = json.loads(request.body)
         action = data.get('action')
         cart = request.session.get('cart', {})
-        pid_str = str(product_id)
         
-        if pid_str in cart:
+        # Ищем ключ (с ID товара или с ID товара + стикеры)
+        cart_key = next((key for key in cart.keys() if key.startswith(str(product_id))), None)
+        
+        if cart_key:
             if action == 'increase':
-                cart[pid_str] += 1
+                cart[cart_key] += 1
             elif action == 'decrease':
-                cart[pid_str] -= 1
-                if cart[pid_str] <= 0:
-                    del cart[pid_str]
+                cart[cart_key] -= 1
+                if cart[cart_key] <= 0:
+                    del cart[cart_key]
                     
         request.session['cart'] = cart
-        request.session.modified = True # <--- ВАЖНО, чтобы сессия обновилась
+        request.session.modified = True 
 
         # Пересчитываем итоги для ответа
         total_price = 0
         total_quantity = 0
-        new_quantity = cart.get(pid_str, 0)
+        new_quantity = cart.get(cart_key, 0) if cart_key else 0
         product = get_object_or_404(Product, id=product_id)
         
-        for pid, qty in cart.items():
+        for pid_key, qty in cart.items():
+            # Достаем ID товара из ключа (до подчеркивания)
+            pid = pid_key.split('_')[0]
             p = Product.objects.filter(id=pid).first()
             if p:
                 total_price += p.price * qty
@@ -142,7 +146,7 @@ def cart_update(request, product_id):
         return JsonResponse({
             'success': True, 
             'new_quantity': new_quantity, 
-            'new_total': product.price * new_quantity if new_quantity > 0 else 0,
+            'new_total': product.price * new_quantity,
             'cart_total': total_price,
             'cart_quantity': total_quantity
         })
@@ -247,23 +251,19 @@ def link_callback(uri, rel):
 
 @login_required
 def receipt(request, order_id):
+    """Генерация PDF-чека"""
     order = get_object_or_404(Order, id=order_id, user=request.user)
     template = get_template('core/receipt_pdf.html')
-    
-    # В шаблоне мы просто укажем /static/fonts/DejaVuSans.ttf
     html = template.render({'order': order})
     
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="receipt_{order.id}.pdf"'
-    
-    # ВОТ ГЛАВНАЯ МАГИЯ (передаем link_callback)
-    pisa_status = pisa.CreatePDF(
-        html, 
-        dest=response, 
-    )
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
     
     if pisa_status.err:
         return HttpResponse('Ошибка при создании PDF', status=500)
+        
     return response
 
 

@@ -19,25 +19,40 @@
             
             <form method="POST" action="{% url 'register' %}">
                 {% csrf_token %}
+                
+                {# Блок вывода ошибок #}
                 {% if form.errors %}
-                    <div style="color: red; margin-bottom: 16px; font-family: var(--body-font-family);">
-                        Пожалуйста, проверьте правильность заполнения полей (или такой email уже занят).
-                    </div>
-                {% endif %}
+    <div style="color: red; margin-bottom: 16px; font-family: var(--body-font-family); font-size: 14px;">
+        <div>Ошибка! Конкретная причина:</div>
+        <div style="margin-top: 8px; font-weight: bold; background: #ffeeee; padding: 10px;">
+            {{ form.errors }}
+        </div>
+    </div>
+{% endif %}
 
                 <div class="input-group">
                     <label>Ваше имя</label>
-                    <input type="text" name="first_name" placeholder="Анна" required>
+                    <input type="text" name="first_name" placeholder="Анна" value="{{ form.first_name.value|default:'' }}" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Логин</label>
+                    <input type="text" name="username" placeholder="Придумайте логин" value="{{ form.username.value|default:'' }}" required>
                 </div>
 
                 <div class="input-group">
                     <label>Электронная почта</label>
-                    <input type="email" name="email" placeholder="anna@example.ru" required>
+                    <input type="email" name="email" placeholder="anna@example.ru" value="{{ form.email.value|default:'' }}" required>
                 </div>
 
                 <div class="input-group">
                     <label>Пароль</label>
-                    <input type="password" name="password" placeholder="••••••••••••" required>
+                    <input type="password" name="password1" placeholder="••••••••••••" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Повторите пароль</label>
+                    <input type="password" name="password2" placeholder="••••••••••••" required>
                 </div>
 
                 <button type="submit" class="btn-primary auth-submit-btn">Зарегистрироваться</button>
