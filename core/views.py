@@ -109,32 +109,31 @@ def cart_remove(request, product_id):
     return redirect('cart_detail')
 
 
-def cart_update(request, cart_key):
+def cart_update(request, product_id):
     if request.method == 'POST':
         data = json.loads(request.body)
         action = data.get('action')
         cart = request.session.get('cart', {})
+        pid_str = str(product_id)
         
-        if cart_key in cart:
+        if pid_str in cart:
             if action == 'increase':
-                cart[cart_key] += 1
+                cart[pid_str] += 1
             elif action == 'decrease':
-                cart[cart_key] -= 1
-                if cart[cart_key] <= 0:
-                    del cart[cart_key]
+                cart[pid_str] -= 1
+                if cart[pid_str] <= 0:
+                    del cart[pid_str]
                     
         request.session['cart'] = cart
-        request.session.modified = True
+        request.session.modified = True # <--- ВАЖНО, чтобы сессия обновилась
 
+        # Пересчитываем итоги для ответа
         total_price = 0
         total_quantity = 0
-        new_quantity = cart.get(cart_key, 0)
-        
-        product_id = cart_key.split('_')[0]
+        new_quantity = cart.get(pid_str, 0)
         product = get_object_or_404(Product, id=product_id)
         
-        for key, qty in cart.items():
-            pid = key.split('_')[0]
+        for pid, qty in cart.items():
             p = Product.objects.filter(id=pid).first()
             if p:
                 total_price += p.price * qty
@@ -143,8 +142,8 @@ def cart_update(request, cart_key):
         return JsonResponse({
             'success': True, 
             'new_quantity': new_quantity, 
-            'new_total': product.price * new_quantity,
-            'cart_total': float(total_price),
+            'new_total': product.price * new_quantity if new_quantity > 0 else 0,
+            'cart_total': total_price,
             'cart_quantity': total_quantity
         })
     return JsonResponse({'success': False}, status=400)
