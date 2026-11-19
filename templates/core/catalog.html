@@ -2,26 +2,21 @@
 {% load static %}
 
 {% block content %}
-    <!-- Заголовок -->
     <p class="text-wrapper" style="margin-bottom: 24px;">Главная / Каталог</p>
     <h1 class="div" style="margin-bottom: 12px;">Каталог</h1>
     <p class="text-wrapper-2" style="margin-bottom: 40px; color: var(--tokens-color-coffee);">
         Найдите свой вкус. Приготовим к вашему приходу.
     </p>
 
-    <!-- Сетка: Фильтры слева + Товары справа -->
     <div class="catalog-layout">
         
-                <!-- ЛЕВАЯ ПАНЕЛЬ С ФИЛЬТРАМИ -->
         <aside class="filter-sidebar">
             <h3 class="filter-title">Фильтры</h3>
             
-            <!-- Обертка в форму для GET-запроса -->
             <form method="GET" action="{% url 'catalog' %}" id="filter-form">
                 <div class="filter-group">
                     <p class="filter-label">Категории</p>
                     
-                    <!-- Чекбокс "Все" -->
                     <label class="filter-checkbox">
                         <input type="checkbox" 
                                onclick="window.location.href='{% url 'catalog' %}'" 
@@ -29,7 +24,6 @@
                         <span>Все</span>
                     </label>
 
-                    <!-- Чекбоксы категорий из базы данных -->
                     {% for cat in categories %}
                     <label class="filter-checkbox">
                         <input type="checkbox" name="category" value="{{ cat.slug }}" 
@@ -42,7 +36,6 @@
             </form>
         </aside>
 
-        <!-- ПРАВАЯ ЧАСТЬ: ТОВАРЫ -->
         <div class="catalog-main">
             <div class="catalog-top-bar">
                 <span class="text-wrapper-2">Найдено {{ products|length }} товаров</span>

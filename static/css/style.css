@@ -226,9 +226,6 @@ body {
 .cart-summary-total { display: flex; justify-content: space-between; font-family: var(--body-font-family); font-size: 20px; font-weight: 500; color: var(--tokens-color-ink); margin-bottom: 32px; }
 .cart-summary-note { font-family: var(--body-font-family); font-size: 12px; color: var(--tokens-color-coffee); line-height: 1.5; margin: 0; opacity: 0.8; }
 
-/* =========================================
-   8. ОФОРМЛЕНИЕ ЗАКАЗА (CHECKOUT)
-   ========================================= */
 .checkout-steps { display: flex; gap: 16px; font-family: var(--body-font-family); font-size: 14px; color: var(--tokens-color-coffee); margin-bottom: 40px; align-items: center; }
 .checkout-steps .active { color: var(--tokens-color-ink); font-weight: 500; }
 .checkout-steps .arrow { color: var(--tokens-color-coffee); opacity: 0.5; }
@@ -247,9 +244,6 @@ body {
 .radio-label input[type="radio"] { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border: 1px solid var(--tokens-color-coffee); border-radius: 50%; outline: none; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; margin: 0; }
 .radio-label input[type="radio"]:checked::after { content: ''; width: 10px; height: 10px; background-color: var(--tokens-color-ink); border-radius: 50%; }
 
-/* =========================================
-   9. СТРАНИЦА УСПЕШНОГО ЗАКАЗА
-   ========================================= */
 .success-subtitle { font-family: var(--body-font-family); font-size: 16px; color: var(--tokens-color-coffee); margin: 0 0 40px 0; }
 .success-card { background-color: var(--tokens-color-white); border-radius: var(--tokens-space-radius); padding: 48px; box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03); display: flex; flex-direction: column; align-items: flex-start; max-width: 900px; }
 .success-icon { margin-bottom: 24px; display: flex; align-items: center; justify-content: center; }
@@ -260,9 +254,6 @@ body {
 .success-actions .btn-primary { background-color: var(--tokens-color-coffee); color: var(--tokens-color-white); border: none; }
 .success-actions .btn-secondary { background-color: #FAF8F5; color: var(--tokens-color-ink); border: 1px solid transparent; }
 
-/* =========================================
-   10. ВХОД И РЕГИСТРАЦИЯ
-   ========================================= */
 .auth-layout { display: flex; flex-direction: row; gap: 32px; align-items: stretch; width: 100%; }
 .auth-image-block { flex: 1; background-color: var(--tokens-color-coffee); border-radius: var(--tokens-space-radius); padding: 40px; display: flex; flex-direction: column; justify-content: space-between; min-height: 500px; }
 .placeholder-text { font-family: var(--body-font-family); font-size: 12px; color: var(--tokens-color-cream); text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
@@ -277,9 +268,6 @@ body {
 .auth-switch-btn { background-color: #faf9f7 !important; border: none !important; color: var(--tokens-color-coffee) !important; }
 .auth-switch-btn:hover { background-color: var(--tokens-color-cream) !important; }
 
-/* =========================================
-   11. БЛОГ
-   ========================================= */
 .blog-filters { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
 .filter-btn { padding: 12px 32px; background-color: var(--tokens-color-white); border: 1px solid var(--tokens-color-cream); border-radius: var(--tokens-space-controlradius); font-family: var(--body-font-family); font-size: 14px; color: var(--tokens-color-coffee); cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03); }
 .filter-btn:hover { background-color: var(--tokens-color-cream); }
@@ -304,9 +292,6 @@ body {
 .blog-card-meta { font-family: var(--body-font-family); font-size: 12px; color: var(--tokens-color-coffee); margin-bottom: 16px; }
 .blog-read-more { font-family: var(--body-font-family); font-size: 14px; color: var(--tokens-color-coffee); font-weight: 500; margin-top: auto; }
 
-/* =========================================
-   12. ПРОФИЛЬ (МОИ ЗАКАЗЫ)
-   ========================================= */
 .profile-layout { display: flex; flex-direction: row; gap: 32px; align-items: flex-start; width: 100%; }
 .profile-sidebar { flex: 0 0 260px; display: flex; flex-direction: column; gap: 12px; }
 .sidebar-btn { display: block; background-color: var(--tokens-color-white); color: var(--tokens-color-coffee); font-family: var(--body-font-family); font-size: 14px; text-align: center; padding: 16px; border-radius: var(--tokens-space-controlradius); text-decoration: none; box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03); transition: background-color 0.2s, color 0.2s; }
@@ -326,9 +311,6 @@ body {
 .order-details-btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; background-color: var(--tokens-color-white); color: var(--tokens-color-coffee); border: 1px solid transparent; border-radius: var(--tokens-space-controlradius); font-family: var(--body-font-family); font-size: 12px; text-decoration: none; width: fit-content; transition: background-color 0.2s; }
 .order-details-btn:hover { background-color: #f0ece6; }
 
-/* =========================================
-   13. АДАПТИВНОСТЬ (МЕДИА-ЗАПРОСЫ)
-   ========================================= */
 
 @media (max-width: 1100px) {
   .sticker-layout { flex-wrap: wrap; }
@@ -342,7 +324,6 @@ body {
   .checkout-layout { flex-direction: column; }
   .checkout-form-container { padding: 24px; }
   
-  /* Делаем ровно 2 колонки на планшетах */
   .product-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
@@ -370,29 +351,24 @@ body {
 }
 
 @media (max-width: 768px) {
-  /* Ставим фильтры и товары друг под другом */
   .catalog-layout { 
     flex-direction: column !important; 
     flex-wrap: wrap !important; 
   }
   
-  /* Фильтры занимают всю ширину и получают отступ снизу */
   .filter-sidebar { 
     width: 100% !important; 
     margin-bottom: 24px; 
   }
   
-  /* Контейнер с товарами занимает всю ширину */
   .catalog-main { 
     width: 100% !important; 
   }
   
-  /* Карточки встают в один столбик (перебиваем !important с компьютера) */
   .product-grid { 
     grid-template-columns: 1fr !important; 
   }
 
-  /* Остальные стили для мобилок (стикеры, блог и т.д.) */
   .sticker-layout { flex-direction: column; }
   .sticker-palette, .sticker-summary { flex: 1 1 100%; width: 100%; }
   .sticker-canvas-wrapper { padding: 20px; }
@@ -424,9 +400,6 @@ body {
   .cart-item-bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
 }
 
-/* =========================================
-   ФИКС КНОПОК ГЛАВНОЙ СТРАНИЦЫ (ИЗ FIGMA)
-   ========================================= */
 .screen .div-wrapper {
   width: 240px;
   height: 48px;
@@ -470,9 +443,6 @@ body {
   font-size: 14px;
 }
 
-/* =========================================
-   ФИКС КАРТОЧЕК БЛОГА НА ГЛАВНОЙ СТРАНИЦЕ
-   ========================================= */
 .screen .view-6 {
   flex-direction: column;
   flex: 1;
@@ -487,7 +457,6 @@ body {
   position: relative;
 }
 
-/* Стили для картинки-заглушки внутри этой карточки */
 .screen .view-6 .element-wrapper {
   display: flex;
   flex-direction: column;
@@ -503,9 +472,6 @@ body {
   overflow: hidden;
 }
 
-/* =========================================
-   ФИНАЛЬНЫЙ ФИКС ТЕКСТОВ ГЛАВНОЙ СТРАНИЦЫ
-   ========================================= */
 .screen .text-wrapper-5 {
   font-family: var(--body-font-family);
   color: var(--tokens-color-coffee);
@@ -516,21 +482,18 @@ body {
 
 .screen .text-wrapper-6 {
   font-family: var(--body-font-family);
-  color: var(--tokens-color-cream); /* Светлый цвет */
+  color: var(--tokens-color-cream); 
   font-size: 12px;
   line-height: 17.4px;
 }
 
 .screen .text-wrapper-7 {
   font-family: var(--display-font-family);
-  color: var(--tokens-color-cream); /* Светлый цвет */
+  color: var(--tokens-color-cream);
   font-size: 32px;
   line-height: 46.4px;
 }
 
-/* =========================================
-   ДЕТАЛЬНАЯ СТРАНИЦА БЛОГА
-   ========================================= */
 .blog-detail-page {
     max-width: 1400px;
     margin: 0 auto;
@@ -554,7 +517,6 @@ body {
     line-height: 1.1;
 }
 
-/* Коричневый блок */
 .blog-detail-hero {
     background-color: var(--tokens-color-coffee);
     border-radius: var(--tokens-space-radius);
@@ -583,17 +545,15 @@ body {
     margin: 0;
 }
 
-/* Белая карточка с текстом */
 .blog-content-card {
     background-color: var(--tokens-color-white);
     border-radius: var(--tokens-space-radius);
     padding: 48px;
     box-shadow: 0 4px 16px rgba(43, 33, 24, 0.03);
-    max-width: 850px; /* Ограничиваем ширину, как на макете */
-    margin-left: 40px; /* Сдвигаем вправо для красоты */
+    max-width: 850px;
+    margin-left: 40px; 
 }
 
-/* Оформление текста внутри карточки */
 .blog-content-card p {
     font-family: var(--body-font-family);
     font-size: 16px;
@@ -602,7 +562,6 @@ body {
     margin-bottom: 16px;
 }
 
-/* Оформление заголовков, если они есть в тексте */
 .blog-content-card h2, 
 .blog-content-card h3 {
     font-family: var(--display-font-family);
@@ -616,7 +575,6 @@ body {
     margin-top: 0;
 }
 
-/* Адаптив для мобилок */
 @media (max-width: 768px) {
     .blog-detail-page .page-title {
         font-size: 36px;
@@ -630,14 +588,11 @@ body {
     }
     .blog-content-card {
         padding: 24px;
-        margin-left: 0; /* Убираем сдвиг на телефонах */
+        margin-left: 0;
         max-width: 100%;
     }
 }
 
-/* =========================================
-   АДМИН ПАНЕЛЬ СТАТИСТИКИ
-   ========================================= */
 .admin-stats-page {
     max-width: 1400px;
     margin: 0 auto;
@@ -655,7 +610,6 @@ body {
     font-family: var(--body-font-family);
 }
 
-/* Сетка карточек */
 .stats-cards-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -691,10 +645,9 @@ body {
 }
 
 .stats-trend.positive {
-    color: #2E7D32; /* Зеленый цвет */
+    color: #2E7D32; 
 }
 
-/* Карточки графика и таблицы */
 .stats-chart-card, .stats-table-card {
     background-color: var(--tokens-color-white);
     border-radius: var(--tokens-space-radius);
@@ -703,7 +656,6 @@ body {
     margin-bottom: 32px;
 }
 
-/* Таблица */
 .admin-table {
     width: 100%;
     border-collapse: collapse;
@@ -730,7 +682,6 @@ body {
     border-bottom: none;
 }
 
-/* Адаптив */
 @media (max-width: 1024px) {
     .stats-cards-grid { grid-template-columns: repeat(2, 1fr); }
 }

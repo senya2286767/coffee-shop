@@ -3,21 +3,16 @@
 
 {% block content %}
 <div class="success-page">
-    <!-- Хлебные крошки -->
     <p class="breadcrumbs">Главная / Ваш заказ принят</p>
 
-    <!-- Заголовок -->
     <h1 class="page-title">Ваш заказ принят</h1>
     
-    <!-- Подзаголовок с номером и датой -->
     <p class="success-subtitle">
         Заказ №{{ order.id }} · {{ order.created_at|date:"d E Y, H:i" }}
     </p>
 
-    <!-- Белая карточка -->
     <div class="success-card">
         
-        <!-- Зеленая галочка (SVG) -->
         <div class="success-icon">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4 12L10 18L20 6" stroke="#2E7D32" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -32,9 +27,7 @@
             <p>Назовите бариста номер <strong>{{ order.id }}</strong>.</p>
         </div>
 
-        <!-- Кнопки -->
         <div class="success-actions">
-            <!-- Ведет на HTML-страницу чека -->
             <a href="{% url 'download_receipt' order.id %}" class="btn-primary success-btn">
                 Открыть чек
             </a>

@@ -3,19 +3,15 @@
 
 {% block content %}
 <div class="catalog-page">
-    <!-- Хлебные крошки -->
     <p class="text-wrapper" style="margin-bottom: 24px;">
         Главная / <a href="{% url 'catalog' %}" style="color: inherit; text-decoration: none;">Каталог</a> / {{ product.name }}
     </p>
     
-    <!-- Заголовок -->
     <h1 class="div" style="margin-bottom: 40px;">{{ product.name }}</h1>
 
     <div class="product-detail-layout">
         
-                <!-- ЛЕВАЯ ЧАСТЬ (Фото и Описание) -->
         <div class="product-detail-left">
-            <!-- Блок с фото (Коричневая рамка) -->
             <div class="product-hero-img">
                 <div class="detail-image-wrapper">
                     {% if product.image %}
@@ -26,7 +22,6 @@
                 </div>
             </div>
 
-            <!-- Описание (вместо табов) -->
             <div class="product-tab-content" style="margin-top: 24px;">
                 <h3 class="text-wrapper-12" style="margin-bottom: 16px;">Описание</h3>
                 <p class="text-wrapper-2">
@@ -35,27 +30,22 @@
             </div>
         </div>
 
-                <!-- ПРАВАЯ ЧАСТЬ (Опции и Покупка) -->
         <div class="product-detail-right">
             <p class="text-wrapper">{{ product.category.name|upper }} / БЕСТСЕЛЛЕР</p>
             <h2 class="text-wrapper-3" style="font-size: 32px;">Нежный, как ваше утро</h2>
             
-            <!-- Фиксированный Объем -->
             <p class="text-wrapper" style="margin-top: 24px; margin-bottom: 8px;">Объем</p>
             <p class="text-wrapper-2" style="font-size: 18px; margin-bottom: 16px; font-weight: 500;">
                 {{ product.volume }}
             </p>
 
-            <!-- Фиксированное Молоко -->
             <p class="text-wrapper" style="margin-bottom: 8px;">Молоко</p>
             <p class="text-wrapper-2" style="font-size: 18px; margin-bottom: 24px; font-weight: 500;">
                 {{ product.milk }}
             </p>
 
-            <!-- Цена -->
             <h2 class="div" style="font-size: 48px; margin: 24px 0;">{{ product.price|floatformat:0 }} ₽</h2>
 
-            <!-- Кнопки -->
             <a href="{% url 'cart_add' product.id %}" class="btn-primary" style="max-width: 100%;">
                 Добавить в корзину
             </a>

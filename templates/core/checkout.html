@@ -3,13 +3,9 @@
 
 {% block content %}
 <div class="checkout-page">
-    <!-- Хлебные крошки -->
     <p class="breadcrumbs">Главная / Оформление заказа</p>
-
-    <!-- Заголовок -->
     <h1 class="page-title">Оформление заказа</h1>
     
-    <!-- Шаги -->
     <div class="checkout-steps">
         <span class="active">1. Контакты</span>
         <span class="arrow">→</span>
@@ -18,14 +14,11 @@
         <span>3. Оплата</span>
     </div>
 
-    <!-- Основная сетка (2 колонки) -->
     <form method="POST" action="{% url 'checkout' %}" class="checkout-layout">
         {% csrf_token %}
         
-        <!-- ЛЕВАЯ КОЛОНКА: Форма -->
         <div class="checkout-form-container">
             
-            <!-- Блок 1: Контакты -->
             <h2 class="form-section-title">Контактные данные</h2>
             
             <div class="input-group">
@@ -43,7 +36,6 @@
                 <input type="email" name="email" placeholder="anna@example.ru" required value="{{ request.user.email|default:'' }}">
             </div>
 
-            <!-- Блок 2: Получение -->
             <h2 class="form-section-title" style="margin-top: 32px;">Получение</h2>
             
             <div class="radio-group">
@@ -64,7 +56,6 @@
                 <input type="text" value="Лесная, 12 · сегодня через 15 минут" readonly>
             </div>
 
-            <!-- Блок 3: Оплата -->
             <h2 class="form-section-title" style="margin-top: 32px;">Оплата</h2>
             
             <div class="radio-group">
@@ -81,7 +72,6 @@
             </div>
         </div>
 
-        <!-- ПРАВАЯ КОЛОНКА: Итог -->
         <aside class="checkout-summary">
             <h3 class="cart-summary-title">Ваш заказ</h3>
             

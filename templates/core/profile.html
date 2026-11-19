@@ -44,7 +44,6 @@
             </div>
         </div>
 
-        <!-- График -->
         <div class="stats-chart-card">
             <h3 class="form-section-title" style="margin-bottom: 24px;">Выручка · последние 7 дней</h3>
             <div style="height: 300px;">
@@ -52,7 +51,6 @@
             </div>
         </div>
 
-        <!-- Таблица -->
         <div class="stats-table-card">
             <table class="admin-table">
                 <thead>
@@ -80,7 +78,6 @@
             </table>
         </div>
 
-        <!-- Подключаем Chart.js только для админа -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             const labels = {{ chart_labels|safe }};
@@ -141,21 +138,16 @@
         </script>
 
     {% else %}
-        <!-- ========================================== -->
-        <!-- ВЕРСТКА ДЛЯ ОБЫЧНОГО КЛИЕНТА (МОИ ЗАКАЗЫ)  -->
-        <!-- ========================================== -->
         <p class="breadcrumbs">Главная / Мои заказы</p>
         <h1 class="page-title">Мои заказы</h1>
         <p class="page-subtitle">Здравствуйте, {{ user.first_name|default:user.username }}. Здесь всё, что вам нужно.</p>
 
         <div class="profile-layout">
-            <!-- Левое меню -->
             <aside class="profile-sidebar">
                 <a href="{% url 'profile' %}" class="sidebar-btn active">Мои заказы</a>
                 <a href="{% url 'logout' %}" class="sidebar-btn">Выйти</a>
             </aside>
 
-            <!-- Правая колонка со списком заказов -->
             <div class="profile-main">
                 <div class="profile-orders-list">
                     {% for order in orders %}

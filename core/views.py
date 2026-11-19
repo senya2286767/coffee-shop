@@ -28,17 +28,15 @@ def catalog(request):
     categories = Category.objects.all()
     products = Product.objects.all()
     
-    # Получаем выбранные категории из URL (например: ?category=coffee&category=tea)
     selected_categories = request.GET.getlist('category')
     
-    # Если выбраны какие-то категории, фильтруем товары
     if selected_categories:
         products = products.filter(category__slug__in=selected_categories)
 
     context = {
         'categories': categories,
         'products': products,
-        'selected_categories': selected_categories, # Передаем в шаблон, чтобы чекбоксы не сбрасывались
+        'selected_categories': selected_categories, 
     }
     return render(request, 'core/catalog.html', context)
 
@@ -51,7 +49,6 @@ def cart_detail(request):
     total_quantity = 0
 
     for cart_key, quantity in cart.items():
-        # Разделяем ключ на ID товара и стикеры
         parts = cart_key.split('_', 1)
         product_id = parts[0]
         stickers_str = parts[1] if len(parts) > 1 else ""
@@ -83,13 +80,10 @@ def cart_add(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart = request.session.get('cart', {})
     
-    # Получаем стикеры из ссылки (если они есть)
     stickers_str = request.GET.get('stickers', '')
     
-    # Создаем уникальный ключ: "1_С собой — тепло" или просто "1", если стикеров нет
     cart_key = f"{product_id}_{stickers_str}" if stickers_str else str(product_id)
 
-    # Добавляем товар в корзину именно по этому ключу
     if cart_key in cart:
         cart[cart_key] += 1
     else:
@@ -126,12 +120,10 @@ def cart_update(request, cart_key):
         request.session['cart'] = cart
         request.session.modified = True
 
-        # Пересчитываем итоги
         total_price = 0
         total_quantity = 0
         new_quantity = cart.get(cart_key, 0)
         
-        # Получаем ID товара из ключа для ответа JS
         product_id = cart_key.split('_')[0]
         product = get_object_or_404(Product, id=product_id)
         
@@ -157,7 +149,6 @@ def product_detail(request, product_id):
 
 
 def sticker_page(request, product_id):
-    # Находим товар по ID. Если товара нет — выдаст ошибку 404.
     product = get_object_or_404(Product, id=product_id)
     return render(request, 'core/sticker.html', {'product': product})
 
@@ -170,10 +161,9 @@ def checkout(request):
     cart_items = []
     total_price = 0
     total_quantity = 0
-    all_stickers = {} # Здесь будем собирать все стикеры для заказа
+    all_stickers = {}
 
     for cart_key, quantity in cart.items():
-        # Разделяем ключ на ID товара и стикеры
         parts = cart_key.split('_', 1)
         product_id = parts[0]
         stickers_str = parts[1] if len(parts) > 1 else ""
@@ -190,7 +180,6 @@ def checkout(request):
                 'quantity': quantity
             })
             
-            # Если есть стикеры, сохраняем их для истории заказа
             if stickers_str:
                 all_stickers[str(product.id)] = stickers_str.split(',')
 
@@ -199,15 +188,9 @@ def checkout(request):
         return redirect('cart_detail')
 
     if request.method == 'POST':
-        # 1. Получаем данные из формы
         name = request.POST.get('name')
         phone = request.POST.get('phone')
         email = request.POST.get('email')
-        # delivery = request.POST.get('delivery')
-        # payment = request.POST.get('payment')
-
-        # 2. Создаем Заказ (Order)
-        # Внимание: сюда мы передаем all_stickers вместо старой переменной stickers_list
         order = Order.objects.create(
             user=request.user,
             total_price=total_price,
@@ -215,7 +198,6 @@ def checkout(request):
             stickers=all_stickers 
         )
 
-        # 3. Создаем позиции заказа (OrderItem)
         for item in cart_items:
             OrderItem.objects.create(
                 order=order,
@@ -224,12 +206,10 @@ def checkout(request):
                 price=item['product'].price
             )
 
-        # 4. Очищаем корзину
         request.session['cart'] = {}
-        request.session['custom_stickers'] = {} # Чистим и стикеры
+        request.session['custom_stickers'] = {}
         request.session.modified = True
 
-        # 5. Перенаправляем на страницу успеха
         return redirect('order_success', order_id=order.id)
 
     return render(request, 'core/checkout.html', {

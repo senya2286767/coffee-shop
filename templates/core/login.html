@@ -3,27 +3,22 @@
 
 {% block content %}
 <div class="auth-page">
-    <!-- Хлебные крошки -->
     <p class="breadcrumbs">Главная / Рады видеть вас снова</p>
 
-    <!-- Заголовок -->
     <h1 class="page-title">Рады видеть вас снова</h1>
     <p class="page-subtitle">Войдите, чтобы сохранить любимое и следить за заказами.</p>
 
     <div class="auth-layout">
-        <!-- ЛЕВАЯ КОЛОНКА: Картинка -->
         <div class="auth-image-block">
             <span class="placeholder-text">ФОТО-ПЛЕЙСХОЛДЕР</span>
             <p class="quote-text">У каждого утра<br>есть своя история.</p>
         </div>
 
-        <!-- ПРАВАЯ КОЛОНКА: Форма -->
         <div class="auth-form-container">
             <h2 class="auth-form-title">Вход</h2>
             
             <form method="POST" action="{% url 'login' %}">
                 {% csrf_token %}
-                <!-- Вывод ошибок, если пароль неверный -->
                 {% if form.errors %}
                     <div style="color: red; margin-bottom: 16px; font-family: var(--body-font-family);">
                         Неверная почта или пароль.

@@ -6,21 +6,19 @@
             font-family: "DejaVuSans";
         src: url("/static/fonts/DejaVuSans.ttf");
         }
-        /* Базовые стили для PDF */
         @page {
             size: a4;
             margin: 2cm;
         }
         body {
             font-family: "DejaVuSans", Helvetica, sans-serif;
-            color: #2b2118; /* Темно-коричневый цвет бренда */
+            color: #2b2118; 
             font-size: 12px;
             line-height: 1.5;
         }
         
-        /* Заголовок и бренд */
         .brand {
-            font-family: "DejaVuSans", Helvetica, sans-serif;/* Замена Playfair Display */
+            font-family: "DejaVuSans", Helvetica, sans-serif;
             font-size: 26px;
             color: #2b2118;
             margin-bottom: 8px;
@@ -28,11 +26,10 @@
         
         .company-info {
             font-size: 10px;
-            color: #6f4e37; /* Кофейный цвет */
+            color: #6f4e37;
             margin-bottom: 25px;
         }
         
-        /* Таблица для выравнивания (вместо Flexbox) */
         .row {
             width: 100%;
             border-collapse: collapse;
@@ -45,7 +42,6 @@
         .text-left { text-align: left; }
         .text-right { text-align: right; }
         
-        /* Метаданные (Номер и дата) */
         .meta-table {
             width: 100%;
             border-collapse: collapse;
@@ -57,7 +53,6 @@
             padding: 0;
         }
         
-        /* Список товаров */
         .items-table {
             width: 100%;
             border-collapse: collapse;
@@ -69,13 +64,11 @@
             font-size: 13px;
         }
         
-        /* Линия-разделитель */
         .divider {
             border-top: 1px solid #2b2118;
             margin: 15px 0 20px 0;
         }
         
-        /* Итоги */
         .totals-table {
             width: 100%;
             border-collapse: collapse;
@@ -90,7 +83,6 @@
             font-weight: bold;
         }
         
-        /* Подвал */
         .footer {
             font-size: 11px;
             color: #6f4e37;
@@ -100,7 +92,6 @@
 </head>
 <body>
 
-    <!-- Шапка -->
     <div class="brand">Тёплое место</div>
     <div class="company-info">
         ООО «Тёплое место»<br>
@@ -108,7 +99,6 @@
         Демонстрационный чек · не фискальный
     </div>
 
-    <!-- Номер заказа и дата -->
     <table class="meta-table">
         <tr>
             <td class="text-left">№{{ order.id }}</td>
@@ -116,23 +106,19 @@
         </tr>
     </table>
 
-    <!-- Товары -->
     <table class="items-table">
         <tbody>
             {% for item in order.items.all %}
             <tr>
                 <td class="text-left">{{ item.product.name }}</td>
-                <!-- Выводим количество и цену (Сумма рассчитывается как цена * кол-во, если у вас нет готового поля, лучше добавить его в модель) -->
                 <td class="text-right">{{ item.quantity }} × {{ item.price|floatformat:0 }} ₽</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <!-- Разделитель -->
     <div class="divider"></div>
 
-    <!-- Итоги -->
     <table class="totals-table">
         <tr>
             <td class="text-left bold-text">ИТОГО</td>
@@ -144,7 +130,6 @@
         </tr>
     </table>
 
-    <!-- Подвал -->
     <div class="footer">
         Спасибо, что провели утро с нами!
     </div>
