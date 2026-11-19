@@ -34,12 +34,17 @@ def catalog(request):
 
 def cart_detail(request):
     cart = request.session.get('cart', {})
-    custom_stickers = request.session.get('custom_stickers', {}) # <-- Получаем стикеры
     cart_items = []
     total_price = 0
     total_quantity = 0
 
-    for product_id, quantity in cart.items():
+    for cart_key, quantity in cart.items():
+        # Разделяем ключ на ID товара и стикеры
+        parts = cart_key.split('_', 1)
+        product_id = parts[0]
+        stickers_str = parts[1] if len(parts) > 1 else ""
+        stickers_list = stickers_str.split(',') if stickers_str else []
+
         product = Product.objects.filter(id=product_id).first()
         
         if product:
@@ -47,14 +52,12 @@ def cart_detail(request):
             total_price += item_total
             total_quantity += quantity
             
-            # Берем стикеры для этого конкретного товара (если есть)
-            item_stickers = custom_stickers.get(str(product_id), [])
-            
             cart_items.append({
                 'product': product,
                 'quantity': quantity,
                 'total': item_total,
-                'stickers': item_stickers  # <-- Передаем в шаблон
+                'stickers': stickers_list,
+                'cart_key': cart_key # Передаем уникальный ключ в шаблон
             })
 
     return render(request, 'core/cart.html', {
@@ -67,66 +70,61 @@ def cart_detail(request):
 def cart_add(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart = request.session.get('cart', {})
+    
+    # Получаем стикеры из ссылки (если они есть)
+    stickers_str = request.GET.get('stickers', '')
+    
+    # Создаем уникальный ключ: "1_С собой — тепло" или просто "1", если стикеров нет
+    cart_key = f"{product_id}_{stickers_str}" if stickers_str else str(product_id)
 
-    if str(product_id) in cart:
-        cart[str(product_id)] += 1
+    # Добавляем товар в корзину именно по этому ключу
+    if cart_key in cart:
+        cart[cart_key] += 1
     else:
-        cart[str(product_id)] = 1
+        cart[cart_key] = 1
 
     request.session['cart'] = cart
-
-    # Ловим стикеры
-    stickers = request.GET.get('stickers')
-    if stickers:
-        custom_stickers = request.session.get('custom_stickers', {})
-        custom_stickers[str(product_id)] = stickers.split(',')
-        request.session['custom_stickers'] = custom_stickers
-        request.session.modified = True
-
     messages.success(request, f'Товар «{product.name}» добавлен в корзину!')
-    
-    # ВОТ ЗДЕСЬ МЕНЯЕМ РЕДИРЕКТ:
-    # Теперь после добавления всегда кидаем в корзину, 
-    # независимо от того, откуда пришел пользователь.
     return redirect('cart_detail') 
 
 
-def cart_remove(request, product_id):
+def cart_remove(request, cart_key):
     cart = request.session.get('cart', {})
-    if str(product_id) in cart:
-        del cart[str(product_id)]
+    if cart_key in cart:
+        del cart[cart_key]
         request.session['cart'] = cart
         messages.info(request, 'Товар удален из корзины.')
     return redirect('cart_detail')
 
 
-def cart_update(request, product_id):
+def cart_update(request, cart_key):
     if request.method == 'POST':
         data = json.loads(request.body)
         action = data.get('action')
         cart = request.session.get('cart', {})
-        pid_str = str(product_id)
         
-        if pid_str in cart:
+        if cart_key in cart:
             if action == 'increase':
-                cart[pid_str] += 1
+                cart[cart_key] += 1
             elif action == 'decrease':
-                cart[pid_str] -= 1
-                if cart[pid_str] <= 0:
-                    del cart[pid_str]
-        elif action == 'increase':
-            cart[pid_str] = 1
-
+                cart[cart_key] -= 1
+                if cart[cart_key] <= 0:
+                    del cart[cart_key]
+                    
         request.session['cart'] = cart
         request.session.modified = True
 
         # Пересчитываем итоги
         total_price = 0
         total_quantity = 0
-        new_quantity = cart.get(pid_str, 0)
+        new_quantity = cart.get(cart_key, 0)
+        
+        # Получаем ID товара из ключа для ответа JS
+        product_id = cart_key.split('_')[0]
         product = get_object_or_404(Product, id=product_id)
         
-        for pid, qty in cart.items():
+        for key, qty in cart.items():
+            pid = key.split('_')[0]
             p = Product.objects.filter(id=pid).first()
             if p:
                 total_price += p.price * qty
@@ -136,11 +134,10 @@ def cart_update(request, product_id):
             'success': True, 
             'new_quantity': new_quantity, 
             'new_total': product.price * new_quantity,
-            'cart_total': total_price,
+            'cart_total': float(total_price),
             'cart_quantity': total_quantity
         })
     return JsonResponse({'success': False}, status=400)
-
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
