@@ -15,9 +15,15 @@ from django.db.models.functions import TruncDate
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import login
 from xhtml2pdf import pisa
+from django.contrib.staticfiles import finders
 
 from .models import Product, Category, Order, OrderItem, BlogPost
 from .forms import RegisterForm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+import os 
+from django.conf import settings
+from django.shortcuts import get_object_or_404
 
 
 def index(request):
@@ -225,14 +231,38 @@ def order_success(request, order_id):
     return render(request, 'core/order_success.html', {'order': order, 'pickup_time': pickup_time})
 
 
+def link_callback(uri, rel):
+    """Переводит URL статики в абсолютный путь на диске без ошибок безопасности"""
+    sUrl = settings.STATIC_URL      # '/static/'
+    sRoot = settings.STATIC_ROOT    # Папка со статикой
+    
+    if not sRoot:
+        sRoot = os.path.join(settings.BASE_DIR, 'static')
+
+    if uri.startswith(sUrl):
+        path = os.path.join(sRoot, uri.replace(sUrl, ""))
+        if os.path.isfile(path):
+            return path
+    return uri
+
+
 @login_required
 def receipt(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     template = get_template('core/receipt_pdf.html')
+    
+    # В шаблоне мы просто укажем /static/fonts/DejaVuSans.ttf
     html = template.render({'order': order})
+    
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="receipt_{order.id}.pdf"'
-    pisa_status = pisa.CreatePDF(html, dest=response)
+    
+    # ВОТ ГЛАВНАЯ МАГИЯ (передаем link_callback)
+    pisa_status = pisa.CreatePDF(
+        html, 
+        dest=response, 
+    )
+    
     if pisa_status.err:
         return HttpResponse('Ошибка при создании PDF', status=500)
     return response
