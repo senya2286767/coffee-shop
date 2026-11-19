@@ -400,26 +400,29 @@ body {
 }
 
 @media (max-width: 768px) {
+  /* Ставим фильтры и товары друг под другом */
   .catalog-layout { 
-    flex-direction: column; 
-    width: 100%;
+    flex-direction: column !important; 
+    flex-wrap: wrap !important; 
   }
   
+  /* Фильтры занимают всю ширину и получают отступ снизу */
   .filter-sidebar { 
-    width: 100%; 
-    margin-bottom: 24px; /* Отступ между фильтрами и товарами */
+    width: 100% !important; 
+    margin-bottom: 24px; 
   }
   
-  /* ВОТ ЭТОТ БЛОК СПАСЕТ КАРТОЧКИ */
-  .catalog-main {
-    width: 100% !important; /* Принудительно даем полную ширину */
-    flex: none !important;  /* Отключаем flex-растяжение, которое может ломать */
+  /* Контейнер с товарами занимает всю ширину */
+  .catalog-main { 
+    width: 100% !important; 
   }
   
+  /* Карточки встают в один столбик (перебиваем !important с компьютера) */
   .product-grid { 
-    grid-template-columns: 1fr !important; /* Одна колонка на телефоне */
-    width: 100%;
+    grid-template-columns: 1fr !important; 
   }
+
+  /* Остальные стили для мобилок (стикеры, блог и т.д.) */
   .sticker-layout { flex-direction: column; }
   .sticker-palette, .sticker-summary { flex: 1 1 100%; width: 100%; }
   .sticker-canvas-wrapper { padding: 20px; }
