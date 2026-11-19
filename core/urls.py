@@ -34,7 +34,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     #path('sticker/save/', views.save_stickers, name='save_stickers'),
     path('cart/update/<str:cart_key>/', views.cart_update, name='cart_update'),
-    path('cart/remove/<str:cart_key>/', views.cart_remove, name='cart_remove'),
+    path('cart/remove/<int:product_id>/', views.cart_remove, name='cart_remove'),
     path('stats/', views.stats_page, name='stats_page'),
     path('admin-stats/', views.admin_stats_view, name='admin_stats'),
 ]

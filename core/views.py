@@ -100,10 +100,10 @@ def cart_add(request, product_id):
     return redirect('cart_detail') 
 
 
-def cart_remove(request, cart_key):
+def cart_remove(request, product_id):
     cart = request.session.get('cart', {})
-    if cart_key in cart:
-        del cart[cart_key]
+    if str(product_id) in cart:
+        del cart[str(product_id)]
         request.session['cart'] = cart
         messages.info(request, 'Товар удален из корзины.')
     return redirect('cart_detail')
