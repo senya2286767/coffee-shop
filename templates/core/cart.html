@@ -12,7 +12,7 @@
             
             <div class="cart-items">
                 {% for item in cart_items %}
-                    <div class="cart-item-card" id="item-card-{{ item.cart_key }}">
+                    <div class="cart-item-card" id="item-card-{{ forloop.counter }}">
                         <h3 class="cart-item-title">{{ item.product.name }}</h3>
                         
                         <p class="cart-item-details">
@@ -26,12 +26,12 @@
                         
                         <div class="cart-item-bottom">
                             <div class="quantity-control">
-                                <button type="button" class="qty-btn" onclick="updateQuantity('{{ item.cart_key }}', 'decrease')">−</button>
-                                <span class="qty-number" id="qty-{{ item.cart_key }}">{{ item.quantity }}</span>
-                                <button type="button" class="qty-btn" onclick="updateQuantity('{{ item.cart_key }}', 'increase')">+</button>
+                                <button type="button" class="qty-btn" onclick="updateQuantity('{{ item.cart_key }}', 'decrease', {{ forloop.counter }})">−</button>
+                                <span class="qty-number" id="qty-{{ forloop.counter }}">{{ item.quantity }}</span>
+                                <button type="button" class="qty-btn" onclick="updateQuantity('{{ item.cart_key }}', 'increase', {{ forloop.counter }})">+</button>
                             </div>
                             
-                            <div class="cart-item-price" id="price-{{ item.cart_key }}">{{ item.total|floatformat:0 }} ₽</div>
+                            <div class="cart-item-price" id="price-{{ forloop.counter }}">{{ item.total|floatformat:0 }} ₽</div>
                         </div>
                         
                         <button class="cart-item-remove" onclick="removeItem('{{ item.cart_key }}')">Удалить</button>
@@ -96,26 +96,30 @@
         return cookieValue;
     }
 
-    function updateQuantity(cartKey, action) {
-        fetch(`/cart/update/${encodeURIComponent(cartKey)}/`, {
+    function updateQuantity(cartKey, action, index) {
+        fetch('/cart/update/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken')
             },
-            body: JSON.stringify({ action: action })
+            body: JSON.stringify({ 
+                cart_key: cartKey, 
+                action: action 
+            })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                document.getElementById(`qty-${cartKey}`).innerText = data.new_quantity;
-                document.getElementById(`price-${cartKey}`).innerText = Math.round(data.new_total) + ' ₽';
+                document.getElementById(`qty-${index}`).innerText = data.new_quantity;
+                document.getElementById(`price-${index}`).innerText = Math.round(data.new_total) + ' ₽';
+                
                 document.getElementById('subtotal-price').innerText = Math.round(data.cart_total) + ' ₽';
                 document.getElementById('grand-total').innerText = Math.round(data.cart_total) + ' ₽';
                 document.getElementById('total-qty').innerText = data.cart_quantity;
                 
                 if (data.new_quantity === 0) {
-                    document.getElementById(`item-card-${cartKey}`).remove();
+                    document.getElementById(`item-card-${index}`).remove();
                 }
             }
         });

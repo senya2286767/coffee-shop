@@ -96,28 +96,14 @@ def cart_add(request, product_id):
     return redirect('cart_detail') 
 
 
-def cart_remove(request, cart_key):
-    """Удаление конкретного товара (со стикерами или без) из корзины"""
-    cart = request.session.get('cart', {})
-    
-    if cart_key in cart:
-        del cart[cart_key]
-        request.session['cart'] = cart
-        request.session.modified = True 
-        messages.info(request, 'Товар удален из корзины.')
-        
-    return redirect('cart_detail')
-
-
-def cart_update(request, product_id):
+def cart_update(request):
     if request.method == 'POST':
         data = json.loads(request.body)
+        cart_key = data.get('cart_key')
         action = data.get('action')
         cart = request.session.get('cart', {})
         
-        cart_key = next((key for key in cart.keys() if key.startswith(str(product_id))), None)
-        
-        if cart_key:
+        if cart_key in cart:
             if action == 'increase':
                 cart[cart_key] += 1
             elif action == 'decrease':
@@ -125,29 +111,44 @@ def cart_update(request, product_id):
                 if cart[cart_key] <= 0:
                     del cart[cart_key]
                     
-        request.session['cart'] = cart
-        request.session.modified = True 
+            request.session['cart'] = cart
+            request.session.modified = True 
 
-        total_price = 0
-        total_quantity = 0
-        new_quantity = cart.get(cart_key, 0) if cart_key else 0
-        product = get_object_or_404(Product, id=product_id)
-        
-        for pid_key, qty in cart.items():
-            pid = pid_key.split('_')[0]
-            p = Product.objects.filter(id=pid).first()
-            if p:
-                total_price += p.price * qty
-                total_quantity += qty
+            total_price = 0
+            total_quantity = 0
+            new_quantity = cart.get(cart_key, 0)
+            
+            product_id = cart_key.split('_')[0]
+            product = get_object_or_404(Product, id=product_id)
+            new_total = product.price * new_quantity
+            
+            for pid_key, qty in cart.items():
+                pid = pid_key.split('_')[0]
+                p = Product.objects.filter(id=pid).first()
+                if p:
+                    total_price += p.price * qty
+                    total_quantity += qty
 
-        return JsonResponse({
-            'success': True, 
-            'new_quantity': new_quantity, 
-            'new_total': product.price * new_quantity,
-            'cart_total': total_price,
-            'cart_quantity': total_quantity
-        })
+            return JsonResponse({
+                'success': True, 
+                'new_quantity': new_quantity, 
+                'new_total': new_total,
+                'cart_total': total_price,
+                'cart_quantity': total_quantity
+            })
+            
     return JsonResponse({'success': False}, status=400)
+
+
+def cart_remove(request, cart_key):
+    """Удаление товара из корзины"""
+    cart = request.session.get('cart', {})
+    if cart_key in cart:
+        del cart[cart_key]
+        request.session['cart'] = cart
+        request.session.modified = True
+    
+    return redirect('cart_detail')
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
