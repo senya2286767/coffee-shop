@@ -19,7 +19,6 @@
         <nav aria-label="Основная навигация">
             <a class="div" href="{% url 'catalog' %}">Каталог</a>
             <a class="div" href="{% url 'blog_list' %}">Блог</a>
-            <a class="div" href="#about">О нас</a>
             {% if user.is_authenticated %}
                 <a class="div" href="{% url 'profile' %}">Профиль ({{ user.first_name }})</a>
             {% else %}

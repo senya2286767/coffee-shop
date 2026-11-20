@@ -1,0 +1,75 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-page">
+    <p class="breadcrumbs">Главная / Заказ №{{ order.id }}</p>
+    
+    <h1 class="page-title">Заказ №{{ order.id }}</h1>
+    <p class="page-subtitle">Здравствуйте, {{ user.first_name|default:user.username }}. Здесь всё, что вам нужно.</p>
+
+    <div class="profile-layout">
+        <!-- ЛЕВОЕ МЕНЮ (точно как в profile.html) -->
+        <aside class="profile-sidebar">
+            <a href="{% url 'profile' %}" class="sidebar-btn active">Мои заказы</a>
+            <a href="{% url 'logout' %}" class="sidebar-btn">Выйти</a>
+        </aside>
+
+        <!-- ПРАВАЯ ЧАСТЬ (Детали заказа) -->
+        <div class="profile-main">
+            
+            <!-- Заголовок статуса -->
+            <h2 style="font-family: var(--display-font-family); font-size: 28px; margin-bottom: 24px; color: var(--tokens-color-ink);">
+                {{ order.get_status_display }} · забрать в {{ pickup_time|time:"H:i" }}
+            </h2>
+
+            <!-- Полоса прогресса (Stepper) -->
+            <div class="order-stepper">
+                <div class="step {% if order.status != 'new' %}completed{% elif order.status == 'new' %}active{% endif %}">
+                    <span class="step-icon">{% if order.status != 'new' %}✓{% else %}●{% endif %}</span> Принят
+                </div>
+                <div class="step {% if order.status == 'ready' or order.status == 'completed' %}completed{% elif order.status == 'processing' %}active{% endif %}">
+                    <span class="step-icon">{% if order.status == 'ready' or order.status == 'completed' %}✓{% elif order.status == 'processing' %}●{% else %}○{% endif %}</span> Готовим
+                </div>
+                <div class="step {% if order.status == 'completed' %}completed{% elif order.status == 'ready' %}active{% endif %}">
+                    <span class="step-icon">{% if order.status == 'completed' %}✓{% elif order.status == 'ready' %}●{% else %}○{% endif %}</span> Готов к выдаче
+                </div>
+            </div>
+
+            <!-- Информация о получении -->
+            <div class="order-info-block">
+                <p style="margin: 0 0 8px 0;">Самовывоз: Москва, ул. Лесная, 12</p>
+                <p style="margin: 0;">Контакт: {{ order.user.first_name|default:"Клиент" }} · +7 999 120-08-08</p>
+            </div>
+
+            <!-- Список товаров -->
+            <div class="order-items-list">
+                {% for item in order.items.all %}
+                <div class="order-item-row">
+                    <span class="item-name">
+                        {{ item.product.name }}{% if item.product.volume %}, {{ item.product.volume }}{% endif %}
+                    </span>
+                    <span class="item-qty-price">{{ item.quantity }} × {{ item.price|floatformat:0 }} ₽</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Итого -->
+            <h3 style="font-family: var(--body-font-family); font-size: 20px; font-weight: 500; margin-top: 24px; margin-bottom: 32px; color: var(--tokens-color-ink);">
+                Итого: {{ order.total_price|floatformat:0 }} ₽ · оплата при получении
+            </h3>
+
+            <!-- Кнопки -->
+            <div style="display: flex; flex-direction: column; gap: 12px; max-width: 320px;">
+                <a href="{% url 'download_receipt' order.id %}" class="btn-primary" style="text-align: center;">
+                    Открыть чек
+                </a>
+                <a href="{% url 'catalog' %}" class="btn-secondary" style="text-align: center; text-decoration: none;">
+                    Повторить заказ
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

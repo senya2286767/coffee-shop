@@ -689,3 +689,57 @@ body {
     .stats-cards-grid { grid-template-columns: 1fr; }
     .admin-table { display: block; overflow-x: auto; white-space: nowrap; }
 }
+
+.order-stepper {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 24px;
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-coffee);
+    opacity: 0.5;
+}
+
+.order-stepper .step.active,
+.order-stepper .step.completed {
+    opacity: 1;
+    font-weight: 500;
+    color: var(--tokens-color-ink);
+}
+
+.order-stepper .step.active .step-icon {
+    color: #2E7D32; 
+}
+
+.order-stepper .step.completed .step-icon {
+    color: #2E7D32; 
+}
+
+.step-icon {
+    margin-right: 4px;
+}
+
+.order-info-block {
+    font-family: var(--body-font-family);
+    font-size: 14px;
+    color: var(--tokens-color-ink);
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+
+.order-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-family: var(--body-font-family);
+    font-size: 16px;
+    color: var(--tokens-color-ink);
+    border-top: 1px solid var(--tokens-color-cream);
+    padding-top: 24px;
+}
+
+.order-item-row {
+    display: flex;
+    justify-content: space-between;
+}

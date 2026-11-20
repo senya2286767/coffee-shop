@@ -99,11 +99,10 @@ def cart_remove(request, cart_key):
     """Удаление конкретного товара (со стикерами или без) из корзины"""
     cart = request.session.get('cart', {})
     
-    # Если такой ключ есть в корзине — удаляем его
     if cart_key in cart:
         del cart[cart_key]
         request.session['cart'] = cart
-        request.session.modified = True # Обязательно говорим Django, что сессия изменилась
+        request.session.modified = True 
         messages.info(request, 'Товар удален из корзины.')
         
     return redirect('cart_detail')
@@ -115,7 +114,6 @@ def cart_update(request, product_id):
         action = data.get('action')
         cart = request.session.get('cart', {})
         
-        # Ищем ключ (с ID товара или с ID товара + стикеры)
         cart_key = next((key for key in cart.keys() if key.startswith(str(product_id))), None)
         
         if cart_key:
@@ -129,14 +127,12 @@ def cart_update(request, product_id):
         request.session['cart'] = cart
         request.session.modified = True 
 
-        # Пересчитываем итоги для ответа
         total_price = 0
         total_quantity = 0
         new_quantity = cart.get(cart_key, 0) if cart_key else 0
         product = get_object_or_404(Product, id=product_id)
         
         for pid_key, qty in cart.items():
-            # Достаем ID товара из ключа (до подчеркивания)
             pid = pid_key.split('_')[0]
             p = Product.objects.filter(id=pid).first()
             if p:
@@ -236,8 +232,8 @@ def order_success(request, order_id):
 
 def link_callback(uri, rel):
     """Переводит URL статики в абсолютный путь на диске без ошибок безопасности"""
-    sUrl = settings.STATIC_URL      # '/static/'
-    sRoot = settings.STATIC_ROOT    # Папка со статикой
+    sUrl = settings.STATIC_URL      
+    sRoot = settings.STATIC_ROOT 
     
     if not sRoot:
         sRoot = os.path.join(settings.BASE_DIR, 'static')
@@ -340,10 +336,9 @@ def register_view(request):
         if User.objects.filter(email=email).exists():
             messages.error(request, "Пользователь с такой почтой уже существует")
         else:
-            # Создаем нового пользователя. В качестве username используем email.
             user = User.objects.create_user(username=email, email=email, password=password, first_name=first_name)
             login(request, user)
-            return redirect('profile') # <-- Сюда перенаправляем после регистрации
+            return redirect('profile') 
 
     return render(request, 'core/register.html')
 
@@ -355,7 +350,6 @@ def profile_view(request):
         'orders': user_orders
     }
 
-    # Если зашел администратор, считаем для него статистику
     if request.user.is_staff:
         today = timezone.now().date()
         
@@ -396,7 +390,6 @@ def login_view(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         
-        # Ищем пользователя по email (стандартный authenticate ищет по username)
         try:
             user_obj = User.objects.get(email=email)
             user = authenticate(request, username=user_obj.username, password=password)
@@ -411,27 +404,23 @@ def login_view(request):
             
     return render(request, 'core/login.html')
 
-@staff_member_required # Доступ только для админов
+@staff_member_required 
 def admin_stats_view(request):
     today = timezone.now().date()
     
-    # 1. Статистика за сегодня
     orders_today = Order.objects.filter(created_at__date=today)
     revenue_today = orders_today.aggregate(total=Sum('total_price'))['total'] or 0
     count_today = orders_today.count()
     avg_check = int(revenue_today / count_today) if count_today > 0 else 0
     
-    # "В работе" (заказы со статусом new или processing)
     in_progress = Order.objects.filter(status__in=['new', 'processing']).count()
 
-    # 2. Данные для графика (за последние 7 дней)
     chart_labels = []
     chart_data = []
-    for i in range(6, -1, -1): # От 6 дней назад до сегодня
+    for i in range(6, -1, -1):
         day = today - timedelta(days=i)
         daily_revenue = Order.objects.filter(created_at__date=day).aggregate(total=Sum('total_price'))['total'] or 0
         
-        # Форматируем дату для графика (например, "11 ср")
         months = ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"]
         weekdays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
         label = f"{day.day} {weekdays[day.weekday()]}"
@@ -439,7 +428,6 @@ def admin_stats_view(request):
         chart_labels.append(label)
         chart_data.append(float(daily_revenue))
 
-    # 3. Последние 5 заказов для таблицы
     recent_orders = Order.objects.all().order_by('-created_at')[:5]
 
     context = {
@@ -458,3 +446,14 @@ def admin_stats_view(request):
 def logout_view(request):
     logout(request)
     return redirect('catalog')
+
+@login_required
+def order_detail_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    
+    pickup_time = order.created_at + timedelta(minutes=15)
+    
+    return render(request, 'core/order_detail.html', {
+        'order': order,
+        'pickup_time': pickup_time
+    })

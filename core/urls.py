@@ -10,8 +10,6 @@ urlpatterns = [
     
     path('cart/', views.cart_detail, name='cart_detail'),
     path('cart/add/<int:product_id>/', views.cart_add, name='cart_add'),
-    path('cart/remove/<str:cart_key>/', views.cart_remove, name='cart_remove'),
-    path('cart/update/<int:product_id>/', views.cart_update, name='cart_update'),
 
     path('product/<int:product_id>/', views.product_detail, name='product_detail'),
 
@@ -29,13 +27,14 @@ urlpatterns = [
     path('api/stats/orders/', views.stats_orders_by_day, name='api_stats_orders'),
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'),
-    path('register/', views.register, name='register'),
+    path('register/', views.register_view, name='register'),
     path('profile/', views.profile_view, name='profile'),
     path('logout/', views.logout_view, name='logout'),
-    #path('sticker/save/', views.save_stickers, name='save_stickers'),
     path('cart/update/<str:cart_key>/', views.cart_update, name='cart_update'),
+    path('cart/remove/<str:cart_key>/', views.cart_remove, name='cart_remove'),
     path('stats/', views.stats_page, name='stats_page'),
     path('admin-stats/', views.admin_stats_view, name='admin_stats'),
+    path('order/<int:order_id>/', views.order_detail_view, name='order_detail'),
 ]
 
 if settings.DEBUG:

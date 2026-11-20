@@ -163,7 +163,7 @@
                                 <span class="order-price">{{ order.total_price|floatformat:0 }} ₽</span>
                             </div>
                             
-                            <a href="#" class="order-details-btn">Подробнее</a>
+                            <a href="{% url 'order_detail' order.id %}" class="order-details-btn">Подробнее</a>
                         </div>
                     {% empty %}
                         <div class="empty-orders">
