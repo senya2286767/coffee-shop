@@ -46,33 +46,76 @@
 ```bash
 git clone https://github.com/ваш-логин/coffee-shop.git
 cd coffee-shop
-### 2. Создание и активация виртуального окружения
-Windows:
+```
 
+---
+
+### 2. Создание и активация виртуального окружения
+**Windows:**
 ```bash
 python -m venv venv
 .\venv\Scripts\activate
+```
 
-macOS / Linux:
-
+**macOS / Linux:**
 ```bash
 python3 -m venv venv
 source venv/bin/activate
+```
 
 ### 3. Установка зависимостей
 ```bash
 pip install -r requirements.txt
-*(Если файла requirements.txt нет, установите вручную: pip install django pillow xhtml2pdf)*
+```
+*(Если файла requirements.txt нет, установите вручную: `pip install django pillow xhtml2pdf`)*
 
 ### 4. Применение миграций (создание базы данных)
 ```bash
 python manage.py migrate
+```
+
 ### 5. Создание суперпользователя (для входа в админку)
 ```bash
 python manage.py createsuperuser
+```
 *(Придумайте логин, email и пароль)*
 
 ### 6. Запуск сервера
-bash
+```bash
 python manage.py runserver
+```
+
 После этого проект будет доступен по адресу: http://127.0.0.1:8000/
+
+## Структура проекта
+
+coffee-shop/
+├── config/                 # Главные настройки Django (settings.py, urls.py)
+├── core/                   # Основное приложение
+│   ├── migrations/         # Миграции базы данных
+│   ├── admin.py            # Настройки админ-панели
+│   ├── models.py           # Модели БД (Product, Category, Order, etc.)
+│   ├── views.py            # Логика (корзина, заказы, генерация PDF, статистика)
+│   └── urls.py             # Маршруты приложения
+├── templates/              # HTML-шаблоны
+│   └── core/
+│       ├── base.html       # Базовый шаблон (шапка, подвал)
+│       ├── index.html      # Главная страница
+│       ├── catalog.html    # Каталог товаров
+│       ├── product_detail.html # Карточка товара
+│       ├── cart.html       # Корзина
+│       ├── sticker.html    # Страница Drag-and-Drop
+│       └── receipt_pdf.html# Шаблон для PDF-чека
+├── static/                 # Статические файлы
+│   ├── css/                # Стили (globals.css, style.css)
+│   ├── js/                 # Скрипты
+│   ├── img/                # Изображения и иконки
+│   └── fonts/              # Шрифты (DejaVuSans.ttf для PDF)
+├── media/                  # Загруженные пользователем файлы (картинки товаров)
+├── manage.py               # Утилита управления Django
+└── requirements.txt        # Список зависимостей
+
+## Авторы проекта
+
+* **[Беликова Александра]** — Frontend-разработчик, UI/UX дизайн, интеграция JS-логики (AJAX, Drag-and-Drop), верстка шаблонов.
+* **[Галанова Ксения]** — Backend-разработчик, проектирование БД, логика корзины, генерация PDF-чеков, настройка статистики.
