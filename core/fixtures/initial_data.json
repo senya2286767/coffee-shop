@@ -38,7 +38,6 @@
     "fields": {
       "category": 1,
       "name": "Эспрессо",
-      "slug": "espresso",
       "volume": "40 мл",
       "milk": "Без молока",
       "price": "150.00",
@@ -51,7 +50,6 @@
     "fields": {
       "category": 1,
       "name": "Американо",
-      "slug": "americano",
       "volume": "250 мл",
       "milk": "Без молока",
       "price": "180.00",
@@ -64,7 +62,6 @@
     "fields": {
       "category": 1,
       "name": "Капучино",
-      "slug": "cappuccino",
       "volume": "300 мл",
       "milk": "Классическое молоко",
       "price": "240.00",
@@ -77,7 +74,6 @@
     "fields": {
       "category": 1,
       "name": "Латте",
-      "slug": "latte",
       "volume": "400 мл",
       "milk": "Классическое молоко",
       "price": "260.00",
@@ -90,7 +86,6 @@
     "fields": {
       "category": 1,
       "name": "Флэт Уайт",
-      "slug": "flat-white",
       "volume": "250 мл",
       "milk": "Классическое молоко",
       "price": "250.00",
@@ -103,7 +98,6 @@
     "fields": {
       "category": 2,
       "name": "Раф Ванильный",
-      "slug": "vanilla-raf",
       "volume": "300 мл",
       "milk": "Сливки 11%",
       "price": "280.00",
@@ -116,7 +110,6 @@
     "fields": {
       "category": 2,
       "name": "Мокка",
-      "slug": "mocha",
       "volume": "350 мл",
       "milk": "Классическое молоко",
       "price": "290.00",
@@ -129,7 +122,6 @@
     "fields": {
       "category": 2,
       "name": "Латте Лавандовый",
-      "slug": "lavender-latte",
       "volume": "400 мл",
       "milk": "Миндальное молоко",
       "price": "320.00",
@@ -142,7 +134,6 @@
     "fields": {
       "category": 2,
       "name": "Какао с маршмеллоу",
-      "slug": "cocoa-marshmallow",
       "volume": "350 мл",
       "milk": "Классическое молоко",
       "price": "270.00",
@@ -155,7 +146,6 @@
     "fields": {
       "category": 3,
       "name": "Матча Латте",
-      "slug": "matcha-latte",
       "volume": "350 мл",
       "milk": "Овсяное молоко",
       "price": "310.00",
@@ -168,7 +158,6 @@
     "fields": {
       "category": 3,
       "name": "Чай Эрл Грей",
-      "slug": "earl-grey",
       "volume": "400 мл",
       "milk": "Без молока",
       "price": "190.00",
@@ -181,7 +170,6 @@
     "fields": {
       "category": 3,
       "name": "Облепиховый чай",
-      "slug": "sea-buckthorn-tea",
       "volume": "400 мл",
       "milk": "Без молока",
       "price": "220.00",
@@ -194,7 +182,6 @@
     "fields": {
       "category": 4,
       "name": "Круассан с миндалем",
-      "slug": "almond-croissant",
       "volume": "120 г",
       "milk": "Без молока",
       "price": "210.00",
@@ -207,7 +194,6 @@
     "fields": {
       "category": 4,
       "name": "Чизкейк Нью-Йорк",
-      "slug": "new-york-cheesecake",
       "volume": "150 г",
       "milk": "Без молока",
       "price": "280.00",
@@ -220,7 +206,6 @@
     "fields": {
       "category": 4,
       "name": "Брауни",
-      "slug": "brownie",
       "volume": "100 г",
       "milk": "Без молока",
       "price": "190.00",
