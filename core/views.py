@@ -1,5 +1,6 @@
 import json
 import io
+import os
 from datetime import timedelta
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
@@ -255,13 +256,24 @@ def receipt(request, order_id):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="receipt_{order.id}.pdf"'
 
-    pisa_status = pisa.CreatePDF(html, dest=response)
+    pisa_status = pisa.CreatePDF(html, dest=response, link_callback=link_callback)
     
     if pisa_status.err:
         return HttpResponse('Ошибка при создании PDF', status=500)
         
     return response
 
+def link_callback(uri, rel):
+    """Автоматически находит файлы в папке static относительно корня проекта"""
+    clean_uri = uri.lstrip('/')
+    if clean_uri.startswith('static/'):
+        clean_uri = clean_uri[len('static/'):]
+    
+    path = os.path.join(settings.BASE_DIR, 'static', clean_uri)
+    
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"Файл не найден: {path}")
+    return path
 
 @login_required
 def download_receipt(request, order_id):
@@ -271,7 +283,7 @@ def download_receipt(request, order_id):
     response = io.BytesIO()
     template = get_template(template_path)
     html = template.render(context)
-    pisa_status = pisa.CreatePDF(html, dest=response)
+    pisa_status = pisa.CreatePDF(html, dest=response, link_callback=link_callback)
     if pisa_status.err:
         return HttpResponse('Ошибка при генерации PDF', status=500)
     response.seek(0)
